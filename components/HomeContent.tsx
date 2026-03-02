@@ -40,6 +40,20 @@ const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: numbe
 
 const hasCoordinates = (motel: Motel): motel is MotelWithCoords => motel.lat !== null && motel.lng !== null
 
+const normalizeText = (value: string): string =>
+  value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim()
+
+const escapeRegex = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+const hasUfToken = (text: string, uf: string): boolean => {
+  const pattern = new RegExp(`(^|[^a-z0-9])${escapeRegex(uf)}([^a-z0-9]|$)`, 'i')
+  return pattern.test(text)
+}
+
 export default function HomeContent({ motels }: Props) {
   const [selectedState, setSelectedState] = useState<string>('')
   const [query, setQuery] = useState<string>('')
@@ -94,13 +108,22 @@ export default function HomeContent({ motels }: Props) {
 
   const filteredMotels = useMemo(() => {
     let results = motels.filter((motel) => {
-      const matchesState = selectedState
-        ? motel.address.toLowerCase().includes(selectedState.toLowerCase())
+      const motelWithLocation = motel as Motel & { city?: string | null; state?: string | null }
+      const normalizedAddress = normalizeText(motel.address || '')
+      const normalizedCity = normalizeText(motelWithLocation.city || '')
+      const normalizedState = normalizeText(motelWithLocation.state || '')
+
+      const stateScope = `${normalizedState} ${normalizedCity} ${normalizedAddress}`
+      const normalizedSelectedState = normalizeText(selectedState)
+
+      const matchesState = normalizedSelectedState
+        ? hasUfToken(stateScope, normalizedSelectedState)
         : true
 
-      const text = `${motel.name} ${motel.address}`.toLowerCase()
-      const matchesQuery = query
-        ? text.includes(query.toLowerCase())
+      const normalizedQuery = normalizeText(query)
+      const searchScope = `${normalizeText(motel.name || '')} ${normalizedAddress} ${normalizedCity} ${normalizedState}`
+      const matchesQuery = normalizedQuery
+        ? searchScope.includes(normalizedQuery)
         : true
 
       return matchesState && matchesQuery
