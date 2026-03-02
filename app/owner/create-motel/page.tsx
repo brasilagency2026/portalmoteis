@@ -42,6 +42,7 @@ function CreateMotelContent() {
   const [geolocating, setGeolocating] = useState(false)
   const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null)
   const [mapsError, setMapsError] = useState<string | null>(null)
+  const [mapsReady, setMapsReady] = useState(false)
   const addressInputRef = useRef<HTMLInputElement>(null)
 
   const [formData, setFormData] = useState({
@@ -110,6 +111,51 @@ function CreateMotelContent() {
   useEffect(() => {
     const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
 
+    const applyAddressComponents = (place: any) => {
+      if (!place?.address_components) return
+
+      const location = place.geometry?.location
+      if (location) {
+        setCoordinates({
+          lat: location.lat(),
+          lng: location.lng(),
+        })
+      }
+
+      let street = ''
+      let number = ''
+      let city = ''
+      let state = ''
+
+      place.address_components.forEach((component: any) => {
+        const types = component.types
+
+        if (types.includes('route')) {
+          street = component.long_name
+        }
+        if (types.includes('street_number')) {
+          number = component.long_name
+        }
+        if (types.includes('administrative_area_level_2') || types.includes('locality')) {
+          city = component.long_name
+        }
+        if (types.includes('administrative_area_level_1')) {
+          const stateShort = component.short_name
+          const stateLong = component.long_name
+          state = `${stateLong} (${stateShort})`
+        }
+      })
+
+      const fullAddress = number ? `${street}, ${number}` : street
+
+      setFormData(prev => ({
+        ...prev,
+        address: fullAddress || place.formatted_address || prev.address,
+        city: city || prev.city,
+        state: state || prev.state
+      }))
+    }
+
     const loadGoogleMapsScript = () => {
       if (!apiKey) {
         setMapsError('Autocompletar indisponível: chave Google Maps não configurada.')
@@ -133,14 +179,17 @@ function CreateMotelContent() {
         script.defer = true
         script.onload = () => {
           setMapsError(null)
+          setMapsReady(true)
           initAutocomplete()
         }
         script.onerror = () => {
           setMapsError('Google Maps não carregou. Verifique a chave/API Places e as restrições de domínio.')
+          setMapsReady(false)
         }
         document.head.appendChild(script)
       } else if (window.google) {
         setMapsError(null)
+        setMapsReady(true)
         initAutocomplete()
       }
     }
@@ -156,60 +205,55 @@ function CreateMotelContent() {
         {
           componentRestrictions: { country: 'br' },
           fields: ['address_components', 'formatted_address', 'geometry'],
-          types: ['address']
+          types: ['geocode']
         }
       )
 
       autocomplete.addListener('place_changed', () => {
         const place = autocomplete.getPlace()
-        
-        if (!place.address_components) return
-
-        const location = place.geometry?.location
-        if (location) {
-          setCoordinates({
-            lat: location.lat(),
-            lng: location.lng(),
-          })
-        }
-
-        let street = ''
-        let number = ''
-        let city = ''
-        let state = ''
-
-        place.address_components.forEach((component: any) => {
-          const types = component.types
-          
-          if (types.includes('route')) {
-            street = component.long_name
-          }
-          if (types.includes('street_number')) {
-            number = component.long_name
-          }
-          if (types.includes('administrative_area_level_2') || types.includes('locality')) {
-            city = component.long_name
-          }
-          if (types.includes('administrative_area_level_1')) {
-            const stateShort = component.short_name
-            const stateLong = component.long_name
-            state = `${stateLong} (${stateShort})`
-          }
-        })
-
-        const fullAddress = number ? `${street}, ${number}` : street
-
-        setFormData(prev => ({
-          ...prev,
-          address: fullAddress || place.formatted_address || '',
-          city: city || prev.city,
-          state: state || prev.state
-        }))
+        if (!place?.address_components) return
+        applyAddressComponents(place)
       })
     }
 
     loadGoogleMapsScript()
   }, [])
+
+  const handleAddressBlur = () => {
+    const value = formData.address?.trim()
+    if (!mapsReady || !value || value.length < 6 || !window.google?.maps?.Geocoder) return
+
+    const geocoder = new window.google.maps.Geocoder()
+    geocoder.geocode({ address: `${value}, Brasil` }, (results: any, status: any) => {
+      if (status !== 'OK' || !results?.[0]) return
+
+      const place = results[0]
+      const location = place.geometry?.location
+      if (location) {
+        setCoordinates({ lat: location.lat(), lng: location.lng() })
+      }
+
+      let city = ''
+      let state = ''
+      place.address_components?.forEach((component: any) => {
+        const types = component.types
+        if (types.includes('administrative_area_level_2') || types.includes('locality')) {
+          city = component.long_name
+        }
+        if (types.includes('administrative_area_level_1')) {
+          const stateShort = component.short_name
+          const stateLong = component.long_name
+          state = `${stateLong} (${stateShort})`
+        }
+      })
+
+      setFormData((prev) => ({
+        ...prev,
+        city: city || prev.city,
+        state: state || prev.state,
+      }))
+    })
+  }
 
   // Géolocalisation
   const handleGeolocation = async () => {
@@ -563,6 +607,7 @@ function CreateMotelContent() {
                 name="address"
                 value={formData.address}
                 onChange={handleInputChange}
+                onBlur={handleAddressBlur}
                 required
                 className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-red-500 transition"
                 placeholder="Digite o endereço e selecione nas sugestões"
