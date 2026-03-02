@@ -1,0 +1,48 @@
+@config "../tailwind.config.ts";
+@import "tailwindcss";
+
+/* custom neon utilities */
+@layer utilities {
+  .neon-text {
+    text-shadow: 0 0 8px #ff0044, 0 0 16px #ff0044;
+    color: #ff0044;
+  }
+  .neon-card {
+    border: 1px solid #ff0044;
+    box-shadow: 0 0 15px rgba(255,0,68,0.5);
+  }
+  .neon-button {
+    transition: box-shadow 0.2s;
+  }
+  .neon-button:hover {
+    box-shadow: 0 0 10px #ff0044;
+  }
+  .neon-bg {
+    background: radial-gradient(circle at top left, #330000, #000);
+  }
+  .btn-3d-red {
+    background: #c53030;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    box-shadow: 0 4px 0 #9b2c2c, 0 6px 10px rgba(0,0,0,0.4);
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+  .btn-3d-red:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #9b2c2c, 0 4px 6px rgba(0,0,0,0.4);
+  }
+  .btn-3d {
+    border-radius: 9999px;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.2), 0 6px 10px rgba(0,0,0,0.3);
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+  .btn-3d:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 rgba(0,0,0,0.2), 0 4px 6px rgba(0,0,0,0.3);
+  }
+  .neon-green-text {
+    color: #39ff14;
+    text-shadow: 0 0 8px #39ff14, 0 0 16px #39ff14;
+  }
+}
