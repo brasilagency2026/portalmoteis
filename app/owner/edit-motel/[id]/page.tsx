@@ -54,6 +54,16 @@ export default function EditMotelPage() {
   const [newPhotos, setNewPhotos] = useState<File[]>([])
   const [removedStoragePaths, setRemovedStoragePaths] = useState<string[]>([])
 
+  const sanitizeFileName = (originalName: string): string => {
+    const normalized = originalName
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-zA-Z0-9._-]/g, '-')
+      .replace(/-+/g, '-')
+
+    return normalized.length > 0 ? normalized : `photo-${Date.now()}.jpg`
+  }
+
   const extractStoragePath = (publicUrl: string): string | null => {
     const marker = '/storage/v1/object/public/motel-photos/'
     const markerIndex = publicUrl.indexOf(marker)
@@ -135,7 +145,25 @@ export default function EditMotelPage() {
     const files = e.target.files
     if (!files || files.length === 0) return
 
-    setNewPhotos((prev) => [...prev, ...Array.from(files)])
+    const selected = Array.from(files)
+    const validFiles = selected.filter((file) => file.type.startsWith('image/'))
+    const invalidCount = selected.length - validFiles.length
+
+    const tooLarge = validFiles.filter((file) => file.size > 10 * 1024 * 1024)
+    const accepted = validFiles.filter((file) => file.size <= 10 * 1024 * 1024)
+
+    if (invalidCount > 0) {
+      setError('Alguns arquivos foram ignorados: selecione apenas imagens.')
+    } else if (tooLarge.length > 0) {
+      setError('Algumas imagens excedem 10MB e foram ignoradas.')
+    } else {
+      setError(null)
+    }
+
+    if (accepted.length > 0) {
+      setNewPhotos((prev) => [...prev, ...accepted])
+    }
+
     e.target.value = ''
   }
 
@@ -181,13 +209,16 @@ export default function EditMotelPage() {
       if (newPhotos.length > 0) {
         for (let index = 0; index < newPhotos.length; index++) {
           const file = newPhotos[index]
-          const fileName = `${user.id}/${Date.now()}-${index}-${file.name}`
+          const safeName = sanitizeFileName(file.name)
+          const fileName = `${user.id}/${Date.now()}-${index}-${safeName}`
 
           const { error: uploadError } = await supabase.storage
             .from('motel-photos')
             .upload(fileName, file)
 
-          if (uploadError) throw uploadError
+          if (uploadError) {
+            throw new Error(`Erro ao enviar ${file.name}: ${uploadError.message}`)
+          }
 
           const { data: publicData } = supabase.storage
             .from('motel-photos')
