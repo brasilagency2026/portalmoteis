@@ -1,5 +1,6 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
@@ -8,6 +9,14 @@ import Link from 'next/link'
 import { LogIn, UserPlus } from 'lucide-react'
 
 export default function ProprietarioLoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-black" />}>
+      <ProprietarioLoginContent />
+    </Suspense>
+  )
+}
+
+function ProprietarioLoginContent() {
   const searchParams = useSearchParams()
   const [isSignUp, setIsSignUp] = useState(searchParams?.get('signup') === 'true')
   const [email, setEmail] = useState('')
