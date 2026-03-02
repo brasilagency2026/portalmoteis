@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { Suspense, useState, useEffect, useRef } from 'react'
 import { createBrowserClient } from '@supabase/ssr'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
@@ -14,6 +14,14 @@ declare global {
 }
 
 export default function CreateMotelPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-zinc-50 dark:bg-zinc-950" />}>
+      <CreateMotelContent />
+    </Suspense>
+  )
+}
+
+function CreateMotelContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [userPlan, setUserPlan] = useState<'free' | 'premium'>('free')
