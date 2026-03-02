@@ -43,6 +43,9 @@ function CreateMotelContent() {
   const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null)
   const [mapsError, setMapsError] = useState<string | null>(null)
   const [mapsReady, setMapsReady] = useState(false)
+  const [addressSuggestions, setAddressSuggestions] = useState<Array<{ description: string; placeId: string }>>([])
+  const [showAddressSuggestions, setShowAddressSuggestions] = useState(false)
+  const [loadingAddressSuggestions, setLoadingAddressSuggestions] = useState(false)
   const addressInputRef = useRef<HTMLInputElement>(null)
 
   const [formData, setFormData] = useState({
@@ -255,6 +258,98 @@ function CreateMotelContent() {
     })
   }
 
+  useEffect(() => {
+    const input = formData.address?.trim() || ''
+
+    if (!mapsReady || !window.google?.maps?.places?.AutocompleteService || input.length < 3) {
+      setAddressSuggestions([])
+      setLoadingAddressSuggestions(false)
+      return
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setLoadingAddressSuggestions(true)
+      const service = new window.google.maps.places.AutocompleteService()
+
+      service.getPlacePredictions(
+        {
+          input,
+          componentRestrictions: { country: 'br' },
+          types: ['address'],
+        },
+        (predictions: any[], status: string) => {
+          setLoadingAddressSuggestions(false)
+          if (status !== 'OK' || !predictions?.length) {
+            setAddressSuggestions([])
+            return
+          }
+
+          setAddressSuggestions(
+            predictions.slice(0, 6).map((prediction: any) => ({
+              description: prediction.description,
+              placeId: prediction.place_id,
+            }))
+          )
+        }
+      )
+    }, 250)
+
+    return () => {
+      window.clearTimeout(timeoutId)
+    }
+  }, [formData.address, mapsReady])
+
+  const handleSelectAddressSuggestion = (suggestion: { description: string; placeId: string }) => {
+    setFormData((prev) => ({ ...prev, address: suggestion.description }))
+    setShowAddressSuggestions(false)
+    setAddressSuggestions([])
+
+    if (!window.google?.maps?.Geocoder) return
+
+    const geocoder = new window.google.maps.Geocoder()
+    geocoder.geocode({ placeId: suggestion.placeId }, (results: any, status: any) => {
+      if (status !== 'OK' || !results?.[0]) return
+
+      const place = results[0]
+      const location = place.geometry?.location
+      if (location) {
+        setCoordinates({ lat: location.lat(), lng: location.lng() })
+      }
+
+      let city = ''
+      let state = ''
+      let street = ''
+      let number = ''
+
+      place.address_components?.forEach((component: any) => {
+        const types = component.types
+        if (types.includes('route')) {
+          street = component.long_name
+        }
+        if (types.includes('street_number')) {
+          number = component.long_name
+        }
+        if (types.includes('administrative_area_level_2') || types.includes('locality')) {
+          city = component.long_name
+        }
+        if (types.includes('administrative_area_level_1')) {
+          const stateShort = component.short_name
+          const stateLong = component.long_name
+          state = `${stateLong} (${stateShort})`
+        }
+      })
+
+      const fullAddress = number ? `${street}, ${number}` : street
+
+      setFormData((prev) => ({
+        ...prev,
+        address: fullAddress || suggestion.description || prev.address,
+        city: city || prev.city,
+        state: state || prev.state,
+      }))
+    })
+  }
+
   // Géolocalisation
   const handleGeolocation = async () => {
     setGeolocating(true)
@@ -336,6 +431,10 @@ function CreateMotelContent() {
   const handleInputChange = (e: any) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
+
+    if (name === 'address') {
+      setShowAddressSuggestions(true)
+    }
   }
 
   const handleAddService = () => {
@@ -585,7 +684,7 @@ function CreateMotelContent() {
             </div>
 
             {/* Endereço */}
-            <div>
+            <div className="relative">
               <div className="flex items-center justify-between mb-2">
                 <label className="block text-sm font-medium text-gray-300">
                   Endereço *
@@ -608,10 +707,30 @@ function CreateMotelContent() {
                 value={formData.address}
                 onChange={handleInputChange}
                 onBlur={handleAddressBlur}
+                onFocus={() => setShowAddressSuggestions(true)}
                 required
                 className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-red-500 transition"
                 placeholder="Digite o endereço e selecione nas sugestões"
               />
+              {showAddressSuggestions && (addressSuggestions.length > 0 || loadingAddressSuggestions) && (
+                <div className="absolute left-0 right-0 mt-1 bg-gray-900 border border-gray-700 rounded-lg shadow-xl z-20 max-h-56 overflow-y-auto">
+                  {loadingAddressSuggestions ? (
+                    <div className="px-3 py-2 text-sm text-gray-400">Buscando sugestões...</div>
+                  ) : (
+                    addressSuggestions.map((suggestion) => (
+                      <button
+                        key={suggestion.placeId}
+                        type="button"
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={() => handleSelectAddressSuggestion(suggestion)}
+                        className="w-full text-left px-3 py-2 text-sm text-gray-200 hover:bg-gray-800 transition"
+                      >
+                        {suggestion.description}
+                      </button>
+                    ))
+                  )}
+                </div>
+              )}
               <p className="text-xs text-gray-500 mt-1">
                 📍 Comece a digitar e selecione o endereço nas sugestões do Google Maps
               </p>
