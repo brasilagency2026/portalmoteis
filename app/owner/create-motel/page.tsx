@@ -46,6 +46,7 @@ function CreateMotelContent() {
   const [addressSuggestions, setAddressSuggestions] = useState<Array<{ description: string; placeId: string }>>([])
   const [showAddressSuggestions, setShowAddressSuggestions] = useState(false)
   const [loadingAddressSuggestions, setLoadingAddressSuggestions] = useState(false)
+  const [addressSuggestionNotice, setAddressSuggestionNotice] = useState<string | null>(null)
   const addressInputRef = useRef<HTMLInputElement>(null)
 
   const [formData, setFormData] = useState({
@@ -263,32 +264,57 @@ function CreateMotelContent() {
 
     if (!mapsReady || !window.google?.maps?.places?.AutocompleteService || input.length < 3) {
       setAddressSuggestions([])
+      setAddressSuggestionNotice(input.length >= 3 ? 'Google Places indisponível no momento.' : null)
       setLoadingAddressSuggestions(false)
       return
     }
 
     const timeoutId = window.setTimeout(() => {
       setLoadingAddressSuggestions(true)
+      setAddressSuggestionNotice(null)
       const service = new window.google.maps.places.AutocompleteService()
 
-      service.getPlacePredictions(
-        {
-          input,
-          componentRestrictions: { country: 'br' },
-          types: ['address'],
-        },
-        (predictions: any[], status: string) => {
-          setLoadingAddressSuggestions(false)
-          if (status !== 'OK' || !predictions?.length) {
-            setAddressSuggestions([])
-            return
-          }
-
+      const applyPredictions = (predictions: any[] | null | undefined, status: string) => {
+        if (status === 'OK' && predictions?.length) {
           setAddressSuggestions(
             predictions.slice(0, 6).map((prediction: any) => ({
               description: prediction.description,
               placeId: prediction.place_id,
             }))
+          )
+          setAddressSuggestionNotice(null)
+          return true
+        }
+
+        return false
+      }
+
+      service.getPlacePredictions(
+        {
+          input,
+          componentRestrictions: { country: 'br' },
+          types: ['geocode'],
+        },
+        (predictions: any[], status: string) => {
+          const hasPrimary = applyPredictions(predictions, status)
+          if (hasPrimary) {
+            setLoadingAddressSuggestions(false)
+            return
+          }
+
+          service.getPlacePredictions(
+            {
+              input,
+              componentRestrictions: { country: 'br' },
+            },
+            (fallbackPredictions: any[], fallbackStatus: string) => {
+              setLoadingAddressSuggestions(false)
+              const hasFallback = applyPredictions(fallbackPredictions, fallbackStatus)
+              if (!hasFallback) {
+                setAddressSuggestions([])
+                setAddressSuggestionNotice('Nenhuma sugestão encontrada para este texto.')
+              }
+            }
           )
         }
       )
@@ -712,10 +738,12 @@ function CreateMotelContent() {
                 className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-red-500 transition"
                 placeholder="Digite o endereço e selecione nas sugestões"
               />
-              {showAddressSuggestions && (addressSuggestions.length > 0 || loadingAddressSuggestions) && (
+              {showAddressSuggestions && formData.address.trim().length >= 3 && (
                 <div className="absolute left-0 right-0 mt-1 bg-gray-900 border border-gray-700 rounded-lg shadow-xl z-20 max-h-56 overflow-y-auto">
                   {loadingAddressSuggestions ? (
                     <div className="px-3 py-2 text-sm text-gray-400">Buscando sugestões...</div>
+                  ) : addressSuggestions.length === 0 ? (
+                    <div className="px-3 py-2 text-sm text-gray-400">{addressSuggestionNotice || 'Nenhuma sugestão encontrada.'}</div>
                   ) : (
                     addressSuggestions.map((suggestion) => (
                       <button
