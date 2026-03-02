@@ -32,6 +32,11 @@ function ProprietarioLoginContent() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
 
+  const appBaseUrl =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    (typeof window !== 'undefined' ? window.location.origin : '')
+  const authCallbackUrl = `${appBaseUrl}/auth/callback`
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
@@ -58,7 +63,7 @@ function ProprietarioLoginContent() {
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
+            emailRedirectTo: authCallbackUrl,
             data: {
               role: 'proprietario',
             },
@@ -106,7 +111,7 @@ function ProprietarioLoginContent() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: authCallbackUrl,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
