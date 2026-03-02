@@ -22,11 +22,11 @@ import { Motel } from '@/types'
 import NavigationButton from '@/components/NavigationButton'
 
 interface PageProps {
-    params: { id: string }
+    params: Promise<{ id: string }>
 }
 
 export default async function MotelDetailsPage({ params }: PageProps) {
-    const { id } = params
+    const { id } = await params
     const supabase = await createClient()
 
     const { data: motelData, error } = await supabase
