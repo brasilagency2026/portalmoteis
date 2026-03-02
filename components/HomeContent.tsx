@@ -191,6 +191,20 @@ export default function HomeContent({ motels }: Props) {
     return results
   }, [motels, selectedState, query, userLocation])
 
+  const searchSuggestions = useMemo(() => {
+    const values = new Set<string>()
+
+    motels.forEach((motel) => {
+      const motelWithLocation = motel as Motel & { city?: string | null; state?: string | null }
+      if (motel.address) values.add(motel.address)
+      if (motelWithLocation.city) values.add(motelWithLocation.city)
+      if (motelWithLocation.state) values.add(motelWithLocation.state)
+      if (motel.name) values.add(motel.name)
+    })
+
+    return Array.from(values).filter(Boolean).slice(0, 20)
+  }, [motels])
+
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 flex flex-col">
       {/* Notification de géolocalisation active */}
@@ -248,9 +262,15 @@ export default function HomeContent({ motels }: Props) {
                       type="text"
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
+                      list="motel-search-suggestions"
                       placeholder="Ex: São Paulo, Av. Paulista..."
                       className="h-11 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 text-sm text-zinc-800 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500"
                     />
+                    <datalist id="motel-search-suggestions">
+                      {searchSuggestions.map((item) => (
+                        <option key={item} value={item} />
+                      ))}
+                    </datalist>
                   </div>
 
                   <div className="flex flex-col gap-2 md:col-span-1">

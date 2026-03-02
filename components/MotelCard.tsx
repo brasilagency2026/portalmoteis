@@ -36,7 +36,7 @@ export default function MotelCard({ motel, distance, isPremiumClose }: { motel: 
             {distance.toFixed(1)} km
           </div>
         )}
-        {(!motel.lat || !motel.lng) && (
+        {(motel.lat === null || motel.lng === null) && (
           <div className="absolute bottom-3 left-3 px-2 py-1 rounded bg-yellow-600/90 text-white text-xs font-semibold z-10">
             ⚠️ Localização indisponível
           </div>

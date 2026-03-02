@@ -10,6 +10,8 @@ import Image from 'next/image'
 import { Phone, MessageCircle } from 'lucide-react'
 import NavigationButton from '@/components/NavigationButton'
 
+const hasCoordinates = (motel: Motel): motel is Motel & { lat: number; lng: number } => motel.lat !== null && motel.lng !== null
+
 // Fix for default marker icon in Next.js
 const icon = L.icon({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
@@ -45,7 +47,7 @@ function AutoFitBounds({ userLocation, motels }: { userLocation: [number, number
 
     // Ajouter tous les motels avec coordonnées
     motels.forEach(motel => {
-      if (motel.lat && motel.lng) {
+      if (hasCoordinates(motel)) {
         bounds.extend([motel.lat, motel.lng])
         hasPoints = true
       }
@@ -73,24 +75,14 @@ export default function MotelMap({ motels, userLocation }: { motels: Motel[], us
   const defaultCenter: [number, number] = [-23.5505, -46.6333] // São Paulo
   
   // Filtrer uniquement les motels avec coordonnées valides
-  const motelsWithCoords = motels.filter(m => m.lat && m.lng)
-
-  // Debug logging
-  console.log('🗺️ MotelMap - Total motels:', motels.length)
-  console.log('🗺️ MotelMap - Motels avec coordonnées:', motelsWithCoords.length)
-  console.log('🗺️ MotelMap - User location:', userLocation)
-  motels.forEach(m => {
-    console.log(`   Motel: ${m.name} - lat: ${m.lat}, lng: ${m.lng}`)
-  })
+  const motelsWithCoords = motels.filter(hasCoordinates)
 
   return (
     <div className="h-[500px] w-full rounded-2xl overflow-hidden shadow-xl border border-zinc-200">
-      {motelsWithCoords.length === 0 && (
-        <div className="absolute inset-0 flex items-center justify-center bg-white/90 z-[1000] rounded-2xl">
-          <div className="text-center p-6">
-            <p className="text-gray-700 font-semibold mb-2">⚠️ Nenhum motel com localização GPS</p>
-            <p className="text-sm text-gray-500">Os motels precisam de coordenadas para aparecer no mapa</p>
-          </div>
+      {motels.length > 0 && motelsWithCoords.length === 0 && (
+        <div className="absolute top-3 left-3 right-3 z-[1000] rounded-xl bg-yellow-50 border border-yellow-200 px-4 py-3">
+          <p className="text-sm text-yellow-800 font-semibold">⚠️ Nenhum motel com localização GPS</p>
+          <p className="text-xs text-yellow-700">Os resultados existem, mas sem coordenadas para marcador no mapa.</p>
         </div>
       )}
       <MapContainer 
@@ -123,7 +115,6 @@ export default function MotelMap({ motels, userLocation }: { motels: Motel[], us
         
         {motelsWithCoords.map((motel) => {
           const markerIcon = motel.plan === 'premium' ? premiumIcon : icon
-          console.log(`🗺️ Rendering marker for ${motel.name} at [${motel.lat}, ${motel.lng}]`)
           return (
             <Marker key={motel.id} position={[motel.lat!, motel.lng!]} icon={markerIcon}>
             <Popup className="custom-popup">
