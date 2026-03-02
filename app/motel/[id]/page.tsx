@@ -21,11 +21,7 @@ import ImageCarousel from '@/components/ImageCarousel'
 import { Motel } from '@/types'
 import NavigationButton from '@/components/NavigationButton'
 
-interface PageProps {
-    params: Promise<{ id: string }>
-}
-
-export default async function MotelDetailsPage({ params }: PageProps) {
+export default async function MotelDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
     const supabase = await createClient()
 
