@@ -15,6 +15,11 @@ type UserLocation = {
   lng: number
 }
 
+type MotelWithCoords = Motel & {
+  lat: number
+  lng: number
+}
+
 const brazilStates = [
   'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO',
   'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI',
@@ -32,6 +37,8 @@ const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: numbe
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
   return R * c
 }
+
+const hasCoordinates = (motel: Motel): motel is MotelWithCoords => motel.lat !== null && motel.lng !== null
 
 export default function HomeContent({ motels }: Props) {
   const [selectedState, setSelectedState] = useState<string>('')
@@ -102,8 +109,8 @@ export default function HomeContent({ motels }: Props) {
     // Si on a la position de l'utilisateur, trier par distance avec priorité aux premium 20km
     if (userLocation) {
       // Séparer les motels avec et sans coordonnées
-      const withCoords = results.filter(m => m.lat && m.lng)
-      const withoutCoords = results.filter(m => !m.lat || !m.lng)
+      const withCoords = results.filter(hasCoordinates)
+      const withoutCoords = results.filter((m) => !hasCoordinates(m))
 
       withCoords.sort((a, b) => {
         const distanceA = calculateDistance(userLocation.lat, userLocation.lng, a.lat, a.lng)
@@ -238,11 +245,11 @@ export default function HomeContent({ motels }: Props) {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredMotels.map((motel) => {
-                const hasCoords = motel.lat && motel.lng
+                const hasCoords = hasCoordinates(motel)
                 const distance = userLocation && hasCoords
                   ? calculateDistance(userLocation.lat, userLocation.lng, motel.lat, motel.lng) 
                   : null
-                const isPremiumClose = motel.plan === 'premium' && distance && distance <= 20
+                const isPremiumClose = motel.plan === 'premium' && distance !== null && distance <= 20
 
                 // Debug logging pour motels sans coordonnées
                 if (!hasCoords) {
