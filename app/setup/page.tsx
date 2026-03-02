@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 
 export default function SetupSuperAdminPage() {
+  const [email, setEmail] = useState('')
   const [setupKey, setSetupKey] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
@@ -14,12 +15,12 @@ export default function SetupSuperAdminPage() {
     setMessage(null)
 
     try {
-      const response = await fetch('/api/setup-super-admin', {
+      const response = await fetch('/api/add-user-to-table', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          email: 'glwebagency2@gmail.com',
-          password: 'Poupougabi@27',
+          email,
+          role: 'super_admin',
           setupKey: setupKey,
         }),
       })
@@ -31,8 +32,9 @@ export default function SetupSuperAdminPage() {
       } else {
         setMessage({
           type: 'success',
-          text: '✅ Super admin créé avec succès! Vous pouvez maintenant vous connecter via /login/admin',
+          text: '✅ Super admin configuré avec succès! Vous pouvez maintenant vous connecter via /login/admin',
         })
+        setEmail('')
         setSetupKey('')
       }
     } catch (err: any) {
@@ -58,6 +60,23 @@ export default function SetupSuperAdminPage() {
           <form onSubmit={handleSetup} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
+                Email à promouvoir en Super Admin
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition"
+                placeholder="ex: glwegagency2@gmail.com"
+              />
+              <p className="text-xs text-gray-500 mt-2">
+                Cet email doit déjà exister dans Supabase Auth.
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Clé de Configuration
               </label>
               <input
@@ -69,7 +88,7 @@ export default function SetupSuperAdminPage() {
                 placeholder="Entrez la clé de setup"
               />
               <p className="text-xs text-gray-500 mt-2">
-                Clé: <code className="text-yellow-400">bdsmbrazil_super_admin_setup_key_2026</code>
+                Entrez la clé stockée dans la variable d'environnement <code className="text-yellow-400">SETUP_SUPER_ADMIN_KEY</code>
               </p>
             </div>
 
