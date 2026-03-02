@@ -41,6 +41,7 @@ function CreateMotelContent() {
   const [uploading, setUploading] = useState(false)
   const [geolocating, setGeolocating] = useState(false)
   const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null)
+  const [mapsError, setMapsError] = useState<string | null>(null)
   const addressInputRef = useRef<HTMLInputElement>(null)
 
   const [formData, setFormData] = useState({
@@ -107,21 +108,48 @@ function CreateMotelContent() {
 
   // Charger Google Maps Autocomplete
   useEffect(() => {
+    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+
     const loadGoogleMapsScript = () => {
+      if (!apiKey) {
+        setMapsError('Autocompletar indisponível: chave Google Maps não configurada.')
+        return
+      }
+
       if (typeof window !== 'undefined' && !window.google) {
+        const existingScript = document.getElementById('google-maps-script') as HTMLScriptElement | null
+        if (existingScript) {
+          if (window.google?.maps?.places) {
+            setMapsError(null)
+            initAutocomplete()
+          }
+          return
+        }
+
         const script = document.createElement('script')
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places&language=pt-BR`
+        script.id = 'google-maps-script'
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places&language=pt-BR`
         script.async = true
         script.defer = true
-        script.onload = initAutocomplete
+        script.onload = () => {
+          setMapsError(null)
+          initAutocomplete()
+        }
+        script.onerror = () => {
+          setMapsError('Google Maps não carregou. Verifique a chave/API Places e as restrições de domínio.')
+        }
         document.head.appendChild(script)
       } else if (window.google) {
+        setMapsError(null)
         initAutocomplete()
       }
     }
 
     const initAutocomplete = () => {
-      if (!addressInputRef.current || !window.google) return
+      if (!addressInputRef.current || !window.google?.maps?.places?.Autocomplete) {
+        setMapsError('Google Places indisponível. Ative Maps JavaScript API e Places API.')
+        return
+      }
 
       const autocomplete = new window.google.maps.places.Autocomplete(
         addressInputRef.current,
@@ -542,6 +570,9 @@ function CreateMotelContent() {
               <p className="text-xs text-gray-500 mt-1">
                 📍 Comece a digitar e selecione o endereço nas sugestões do Google Maps
               </p>
+              {mapsError && (
+                <p className="text-xs text-red-400 mt-2">{mapsError}</p>
+              )}
             </div>
 
             {/* Telefone e WhatsApp */}
