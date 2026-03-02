@@ -26,6 +26,36 @@ const brazilStates = [
   'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO',
 ]
 
+const ufToStateName: Record<string, string> = {
+  AC: 'acre',
+  AL: 'alagoas',
+  AP: 'amapa',
+  AM: 'amazonas',
+  BA: 'bahia',
+  CE: 'ceara',
+  DF: 'distrito federal',
+  ES: 'espirito santo',
+  GO: 'goias',
+  MA: 'maranhao',
+  MT: 'mato grosso',
+  MS: 'mato grosso do sul',
+  MG: 'minas gerais',
+  PA: 'para',
+  PB: 'paraiba',
+  PR: 'parana',
+  PE: 'pernambuco',
+  PI: 'piaui',
+  RJ: 'rio de janeiro',
+  RN: 'rio grande do norte',
+  RS: 'rio grande do sul',
+  RO: 'rondonia',
+  RR: 'roraima',
+  SC: 'santa catarina',
+  SP: 'sao paulo',
+  SE: 'sergipe',
+  TO: 'tocantins',
+}
+
 // Calcul de distance Haversine
 const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
   const R = 6371 // Rayon de la Terre en km
@@ -44,7 +74,9 @@ const normalizeText = (value: string): string =>
   value
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-zA-Z0-9\s]/g, ' ')
     .toLowerCase()
+    .replace(/\s+/g, ' ')
     .trim()
 
 const escapeRegex = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -115,15 +147,17 @@ export default function HomeContent({ motels }: Props) {
 
       const stateScope = `${normalizedState} ${normalizedCity} ${normalizedAddress}`
       const normalizedSelectedState = normalizeText(selectedState)
+      const selectedStateName = ufToStateName[selectedState] || ''
 
       const matchesState = normalizedSelectedState
-        ? hasUfToken(stateScope, normalizedSelectedState)
+        ? hasUfToken(stateScope, normalizedSelectedState) || stateScope.includes(selectedStateName)
         : true
 
       const normalizedQuery = normalizeText(query)
       const searchScope = `${normalizeText(motel.name || '')} ${normalizedAddress} ${normalizedCity} ${normalizedState}`
-      const matchesQuery = normalizedQuery
-        ? searchScope.includes(normalizedQuery)
+      const queryTokens = normalizedQuery ? normalizedQuery.split(' ').filter(Boolean) : []
+      const matchesQuery = queryTokens.length > 0
+        ? queryTokens.every((token) => searchScope.includes(token))
         : true
 
       return matchesState && matchesQuery
