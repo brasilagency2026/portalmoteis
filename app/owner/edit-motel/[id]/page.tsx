@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { createBrowserClient } from '@supabase/ssr'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Save, AlertCircle } from 'lucide-react'
+import { ArrowLeft, Save, AlertCircle, Eye, Trash2, Upload } from 'lucide-react'
 
 type MotelForm = {
   name: string
@@ -50,6 +50,18 @@ export default function EditMotelPage() {
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
   const [formData, setFormData] = useState<MotelForm>(initialForm)
+  const [existingPhotos, setExistingPhotos] = useState<string[]>([])
+  const [newPhotos, setNewPhotos] = useState<File[]>([])
+  const [removedStoragePaths, setRemovedStoragePaths] = useState<string[]>([])
+
+  const extractStoragePath = (publicUrl: string): string | null => {
+    const marker = '/storage/v1/object/public/motel-photos/'
+    const markerIndex = publicUrl.indexOf(marker)
+
+    if (markerIndex === -1) return null
+
+    return decodeURIComponent(publicUrl.substring(markerIndex + marker.length))
+  }
 
   useEffect(() => {
     const loadMotel = async () => {
@@ -74,7 +86,7 @@ export default function EditMotelPage() {
 
         const { data: motel, error: motelError } = await supabase
           .from('motels')
-          .select('name, state, city, address, phone, whatsapp, operating_hours, description, website, instagram, facebook, owner_id')
+          .select('name, state, city, address, phone, whatsapp, operating_hours, description, website, instagram, facebook, owner_id, photos')
           .eq('id', motelId)
           .eq('owner_id', user.id)
           .single()
@@ -98,6 +110,12 @@ export default function EditMotelPage() {
           instagram: motel.instagram || '',
           facebook: motel.facebook || '',
         })
+
+        const motelPhotos = Array.isArray(motel.photos)
+          ? motel.photos.filter((photo: unknown): photo is string => typeof photo === 'string')
+          : []
+
+        setExistingPhotos(motelPhotos)
       } catch (err: any) {
         setError(err.message || 'Erro ao carregar motel')
       } finally {
@@ -111,6 +129,31 @@ export default function EditMotelPage() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleNewPhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+
+    setNewPhotos((prev) => [...prev, ...Array.from(files)])
+    e.target.value = ''
+  }
+
+  const handleRemoveNewPhoto = (index: number) => {
+    setNewPhotos((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  const handleRemoveExistingPhoto = (index: number) => {
+    setExistingPhotos((prev) => {
+      const targetUrl = prev[index]
+      const storagePath = extractStoragePath(targetUrl)
+
+      if (storagePath) {
+        setRemovedStoragePaths((current) => (current.includes(storagePath) ? current : [...current, storagePath]))
+      }
+
+      return prev.filter((_, i) => i !== index)
+    })
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -134,6 +177,28 @@ export default function EditMotelPage() {
         return
       }
 
+      const uploadedPhotoUrls: string[] = []
+      if (newPhotos.length > 0) {
+        for (let index = 0; index < newPhotos.length; index++) {
+          const file = newPhotos[index]
+          const fileName = `${user.id}/${Date.now()}-${index}-${file.name}`
+
+          const { error: uploadError } = await supabase.storage
+            .from('motel-photos')
+            .upload(fileName, file)
+
+          if (uploadError) throw uploadError
+
+          const { data: publicData } = supabase.storage
+            .from('motel-photos')
+            .getPublicUrl(fileName)
+
+          uploadedPhotoUrls.push(publicData.publicUrl)
+        }
+      }
+
+      const finalPhotos = [...existingPhotos, ...uploadedPhotoUrls]
+
       const { error: updateError } = await supabase
         .from('motels')
         .update({
@@ -148,13 +213,20 @@ export default function EditMotelPage() {
           website: formData.website || null,
           instagram: formData.instagram || null,
           facebook: formData.facebook || null,
+          photos: finalPhotos,
         })
         .eq('id', motelId)
         .eq('owner_id', user.id)
 
       if (updateError) throw updateError
 
+      if (removedStoragePaths.length > 0) {
+        await supabase.storage.from('motel-photos').remove(removedStoragePaths)
+      }
+
       setMessage('Motel atualizado com sucesso!')
+      setNewPhotos([])
+      setRemovedStoragePaths([])
       setTimeout(() => router.push('/owner/dashboard'), 900)
     } catch (err: any) {
       setError(err.message || 'Erro ao atualizar motel')
@@ -246,6 +318,67 @@ export default function EditMotelPage() {
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">Descrição</label>
               <textarea name="description" value={formData.description} onChange={handleInputChange} rows={4} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-red-500 transition" />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-3">Fotos atuais</label>
+              {existingPhotos.length === 0 ? (
+                <p className="text-sm text-gray-400">Nenhuma foto cadastrada.</p>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {existingPhotos.map((photoUrl, index) => (
+                    <div key={`${photoUrl}-${index}`} className="bg-gray-800 border border-gray-700 rounded-lg p-2">
+                      <img src={photoUrl} alt={`Foto ${index + 1}`} className="w-full h-28 object-cover rounded" />
+                      <div className="mt-2 flex gap-2">
+                        <a
+                          href={photoUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex-1 inline-flex items-center justify-center gap-1 px-2 py-1.5 text-xs bg-blue-700 hover:bg-blue-600 rounded"
+                        >
+                          <Eye size={14} />
+                          Ver
+                        </a>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveExistingPhoto(index)}
+                          className="flex-1 inline-flex items-center justify-center gap-1 px-2 py-1.5 text-xs bg-red-700 hover:bg-red-600 rounded"
+                        >
+                          <Trash2 size={14} />
+                          Excluir
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Adicionar novas fotos</label>
+              <label className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 border border-dashed border-gray-600 rounded-lg bg-gray-800/60 hover:bg-gray-800 cursor-pointer">
+                <Upload size={16} />
+                Selecionar imagens
+                <input type="file" accept="image/*" multiple className="hidden" onChange={handleNewPhotoSelect} />
+              </label>
+
+              {newPhotos.length > 0 && (
+                <div className="mt-3 space-y-2">
+                  {newPhotos.map((file, index) => (
+                    <div key={`${file.name}-${index}`} className="flex items-center justify-between bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm">
+                      <span className="text-gray-200 truncate pr-3">{file.name}</span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveNewPhoto(index)}
+                        className="inline-flex items-center gap-1 text-red-400 hover:text-red-300"
+                      >
+                        <Trash2 size={14} />
+                        Remover
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
