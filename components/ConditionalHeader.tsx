@@ -10,6 +10,7 @@ export default function ConditionalHeader() {
   const noHeaderRoutes = [
     '/owner/dashboard',
     '/owner/create-motel',
+    '/owner/statistics',
     '/admin/dashboard',
     '/login',
     '/login/proprietario',
