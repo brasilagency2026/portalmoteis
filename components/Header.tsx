@@ -5,7 +5,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { createBrowserClient } from '@supabase/ssr'
 import { LogOut, User } from 'lucide-react'
-import ThemeToggle from '@/components/ThemeToggle'
 
 export default function Header() {
   const [user, setUser] = useState<any>(null)
@@ -29,7 +28,7 @@ export default function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 shadow-md bg-white/95 dark:bg-black text-zinc-900 dark:text-white border-b border-zinc-200 dark:border-zinc-800">
+    <header className="sticky top-0 z-50 shadow-md bg-black text-white border-b border-zinc-800">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
         <Link href="/" className="flex items-center gap-2">
           <Image 
@@ -43,7 +42,6 @@ export default function Header() {
         </Link>
 
         <nav className="flex items-center gap-4">
-          <ThemeToggle />
           {user ? (
             <>
               <Link href="/owner/dashboard" className="flex items-center gap-2 hover:text-red-500 transition-colors">
