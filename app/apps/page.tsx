@@ -34,7 +34,7 @@ const apps = [
   {
     id: 4,
     name: 'Classificados BDSM',
-    description: 'Comunidade de encontros e pequenas anúncios BDSM no Brasil. Publique ou responda em classificados.bdsmbrazil.com.br',
+    description: 'Em breve: nova plataforma de pequenas annonces BDSM com anonimato total, sem telefone, WhatsApp ou email público, com comunicação orientada ao app Session.',
     icon: Heart,
     color: 'bg-blue-600',
     status: 'Ativo',
