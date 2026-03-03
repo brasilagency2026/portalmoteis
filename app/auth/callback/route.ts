@@ -5,6 +5,11 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
+  const appBaseUrl =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.APP_URL ||
+    `${requestUrl.protocol}//${requestUrl.host}` ||
+    'https://moteis.bdsmbrazil.com.br'
 
   if (code) {
     const cookieStore = await cookies()
@@ -50,5 +55,5 @@ export async function GET(request: NextRequest) {
   }
 
   // Redirige vers la page owner après confirmation
-  return NextResponse.redirect(new URL('/owner', request.url))
+  return NextResponse.redirect(new URL('/owner', appBaseUrl))
 }
