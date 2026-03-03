@@ -6,12 +6,12 @@ import { ArrowLeft, MapPin, Users, Heart, Shield, MessageSquare } from 'lucide-r
 const apps = [
   {
     id: 1,
-    name: 'Portal de Motéis BDSM',
-    description: 'Plataforma principal para descobrir e conectar-se com motéis especializados em suites temáticas BDSM em todo o Brasil. Busca por localização, avaliações e serviços diferenciados.',
+    name: 'Loja produtos BDSM',
+    description: 'Loja oficial com produtos BDSM selecionados para diferentes perfis e experiências, com foco em qualidade, discrição e segurança.',
     icon: MapPin,
     color: 'bg-red-600',
     status: 'Ativo',
-    link: '/'
+    link: 'https://bdsmbrazil.com.br/loja'
   },
   {
     id: 2,
