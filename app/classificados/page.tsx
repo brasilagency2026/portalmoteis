@@ -14,7 +14,7 @@ export default function ClassificadosComingSoonPage() {
           <p className="text-xs uppercase tracking-widest text-red-400 mb-3">Em breve</p>
           <h1 className="text-3xl md:text-4xl font-bold mb-4 neon-text">Classificados BDSM</h1>
           <p className="text-zinc-300 leading-relaxed mb-8">
-            Estamos construindo um novo site de pequenas annonces BDSM com foco em anonimato total.
+            Estamos construindo um novo site de classificados BDSM com foco em anonimato total.
             Não será necessário publicar número de telefone, WhatsApp ou email.
           </p>
 
