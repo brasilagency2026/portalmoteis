@@ -9,6 +9,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Phone, MessageCircle } from 'lucide-react'
 import NavigationButton from '@/components/NavigationButton'
+import { buildMotelPath } from '@/lib/utils'
 
 const hasCoordinates = (motel: Motel): motel is Motel & { lat: number; lng: number } => motel.lat !== null && motel.lng !== null
 
@@ -150,7 +151,7 @@ export default function MotelMap({ motels, userLocation }: { motels: Motel[], us
                 </div>
                 
                 <Link 
-                  href={`/motel/${motel.id}`}
+                  href={buildMotelPath(motel.name, motel.id)}
                   className="block w-full text-center bg-black !text-white py-1.5 rounded-full text-sm font-medium hover:bg-zinc-800 transition-colors btn-3d"
                 >
                   Ver Detalhes

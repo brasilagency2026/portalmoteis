@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
-import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
+import { notFound, redirect } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
@@ -20,9 +21,59 @@ import MotelMapDynamic from '@/components/MotelMapDynamic'
 import ImageCarousel from '@/components/ImageCarousel'
 import { Motel } from '@/types'
 import NavigationButton from '@/components/NavigationButton'
+import { buildMotelPath, extractMotelId } from '@/lib/utils'
+
+const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://moteis.bdsmbrazil.com.br'
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+    const { id: routeParam } = await params
+    const motelId = extractMotelId(routeParam)
+    const supabase = await createClient()
+
+    const { data: motelData } = await supabase
+        .from('motels')
+        .select('id, name, description, address, photos')
+        .eq('id', motelId)
+        .single()
+
+    if (!motelData) {
+        return {
+            title: 'Motel não encontrado | BDSMBRAZIL',
+            description: 'Esta ficha de motel não foi encontrada.',
+            robots: { index: false, follow: true },
+        }
+    }
+
+    const canonicalPath = buildMotelPath(motelData.name, motelData.id)
+    const canonicalUrl = `${appBaseUrl}${canonicalPath}`
+    const image = motelData.photos?.[0] || '/favicon.ico'
+    const description = motelData.description || `Conheça ${motelData.name} em ${motelData.address}.`
+
+    return {
+        title: `${motelData.name} | Motéis BDSM`,
+        description,
+        alternates: { canonical: canonicalPath },
+        openGraph: {
+            title: motelData.name,
+            description,
+            url: canonicalUrl,
+            siteName: 'BDSMBRAZIL',
+            locale: 'pt_BR',
+            type: 'article',
+            images: [{ url: image }],
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: motelData.name,
+            description,
+            images: [image],
+        },
+    }
+}
 
 export default async function MotelDetailsPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params
+    const { id: routeParam } = await params
+    const id = extractMotelId(routeParam)
     const supabase = await createClient()
 
     const { data: motelData, error } = await supabase
@@ -89,6 +140,11 @@ export default async function MotelDetailsPage({ params }: { params: Promise<{ i
 
     if (!motel) {
         notFound()
+    }
+
+    const canonicalPath = buildMotelPath(motel.name, motel.id)
+    if (routeParam !== canonicalPath.replace('/motel/', '')) {
+        redirect(canonicalPath)
     }
 
     return (

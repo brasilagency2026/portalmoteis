@@ -3,11 +3,14 @@ import Link from 'next/link'
 import { Motel } from '@/types'
 import { MapPin, MessageCircle, Phone, Star } from 'lucide-react'
 import NavigationButton from '@/components/NavigationButton'
+import { buildMotelPath } from '@/lib/utils'
 
 export default function MotelCard({ motel, distance, isPremiumClose }: { motel: Motel, distance?: number | null, isPremiumClose?: boolean }) {
+  const motelPath = buildMotelPath(motel.name, motel.id)
+
   return (
     <div className="bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden shadow-lg border border-zinc-100 dark:border-zinc-800 hover:shadow-xl transition-all duration-300 group flex flex-col h-full">
-      <Link href={`/motel/${motel.id}`} className="relative h-56 w-full block overflow-hidden">
+      <Link href={motelPath} className="relative h-56 w-full block overflow-hidden">
         <Image 
           src={motel.photos[0] || 'https://picsum.photos/800/600'} 
           alt={motel.name} 
@@ -44,7 +47,7 @@ export default function MotelCard({ motel, distance, isPremiumClose }: { motel: 
       </Link>
       
       <div className="p-5 flex flex-col flex-grow">
-        <Link href={`/motel/${motel.id}`}>
+        <Link href={motelPath}>
           <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-50 mb-2 group-hover:text-red-600 transition-colors line-clamp-1">{motel.name}</h3>
         </Link>
         <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4 line-clamp-2 flex-grow">{motel.address}</p>
@@ -70,7 +73,7 @@ export default function MotelCard({ motel, distance, isPremiumClose }: { motel: 
           </div>
           
           <Link 
-            href={`/motel/${motel.id}`}
+            href={motelPath}
             className="text-sm font-semibold text-red-600 hover:text-red-700 flex items-center gap-1"
           >
             Ver mais &rarr;

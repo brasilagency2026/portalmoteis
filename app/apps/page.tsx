@@ -1,7 +1,12 @@
-'use client'
-
 import Link from 'next/link'
+import type { Metadata } from 'next'
 import { ArrowLeft, MapPin, Users, Heart, Shield, MessageSquare } from 'lucide-react'
+
+export const metadata: Metadata = {
+  title: 'Apps BDSMBRAZIL',
+  description: 'Conheça os aplicativos e serviços do ecossistema BDSMBRAZIL.',
+  alternates: { canonical: '/apps' },
+}
 
 const apps = [
   {

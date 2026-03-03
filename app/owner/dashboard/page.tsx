@@ -5,6 +5,7 @@ import { createBrowserClient } from '@supabase/ssr'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { LogOut, Plus, Edit2, Eye, Trash2, AlertCircle, Sparkles, TrendingUp, Crown } from 'lucide-react'
+import { buildMotelPath } from '@/lib/utils'
 
 interface Motel {
   id: string
@@ -231,7 +232,7 @@ export default function OwnerDashboard() {
               {/* Action Buttons */}
               <div className="flex flex-wrap gap-3">
                 <Link
-                  href={`/motel/${motel.id}`}
+                  href={buildMotelPath(motel.name, motel.id)}
                   className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-lg transition-all shadow-lg hover:shadow-blue-500/50 font-semibold"
                   target="_blank"
                 >

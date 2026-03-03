@@ -5,6 +5,7 @@ import { createBrowserClient } from '@supabase/ssr'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { LogOut, Users, Home, AlertCircle, MoreVertical } from 'lucide-react'
+import { buildMotelPath } from '@/lib/utils'
 
 interface User {
   id: string
@@ -436,7 +437,7 @@ export default function AdminDashboard() {
                       <td className="px-6 py-3 text-center">
                         <div className="flex items-center justify-center gap-2">
                           <Link
-                            href={`/motel/${motel.id}`}
+                            href={buildMotelPath(motel.name, motel.id)}
                             target="_blank"
                             className="text-blue-400 hover:text-blue-300 transition text-xs px-2 py-1 rounded border border-blue-600"
                             title="Ver motel"

@@ -1,5 +1,12 @@
 import Link from 'next/link'
+import type { Metadata } from 'next'
 import { ArrowLeft, Shield, Lock, Smartphone } from 'lucide-react'
+
+export const metadata: Metadata = {
+  title: 'Classificados BDSM (Em breve)',
+  description: 'Nova plataforma de classificados BDSM com foco em anonimato e comunicação via Session.',
+  alternates: { canonical: '/classificados' },
+}
 
 export default function ClassificadosComingSoonPage() {
   return (

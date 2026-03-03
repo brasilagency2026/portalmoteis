@@ -1,6 +1,13 @@
 import { createClient } from '@/lib/supabase/server'
+import type { Metadata } from 'next'
 import { Motel } from '@/types'
 import HomeContent from '@/components/HomeContent'
+
+export const metadata: Metadata = {
+  title: 'Portal de Motéis BDSM no Brasil',
+  description: 'Busque motéis BDSM por estado e endereço, veja localização no mapa e encontre opções premium e discretas.',
+  alternates: { canonical: '/' },
+}
 
 export default async function Page() {
   const supabase = await createClient()
