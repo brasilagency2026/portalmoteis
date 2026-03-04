@@ -42,6 +42,11 @@ function uuidToCompact(uuid: string) {
   return value.toString(36)
 }
 
+function uuidToReadableToken(uuid: string) {
+  if (!UUID_REGEX.test(uuid)) return uuid
+  return uuid.split('-')[0]
+}
+
 function compactToUuid(value: string) {
   if (!/^[0-9a-z]+$/i.test(value)) return null
 
@@ -82,8 +87,8 @@ function truncateSegment(segment: string, maxLength: number) {
 }
 
 export function buildMotelPath(name: string, id: string, address?: string) {
-  const compactId = uuidToCompact(id)
-  const maxSlugLength = Math.max(8, TARGET_ROUTE_SEGMENT_MAX - compactId.length - 1)
+  const readableId = uuidToReadableToken(id)
+  const maxSlugLength = Math.max(8, TARGET_ROUTE_SEGMENT_MAX - readableId.length - 1)
 
   let nameSlug = slugify(name) || 'motel'
   let locationSlug = slugify(extractAddressLocation(address))
@@ -102,7 +107,7 @@ export function buildMotelPath(name: string, id: string, address?: string) {
   }
 
   const slug = locationSlug ? `${nameSlug}-${locationSlug}` : nameSlug
-  return `/motel/${slug}-${compactId}`
+  return `/motel/${slug}-${readableId}`
 }
 
 export function extractMotelId(param: string) {

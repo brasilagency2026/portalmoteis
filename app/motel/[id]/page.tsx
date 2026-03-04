@@ -24,17 +24,37 @@ import NavigationButton from '@/components/NavigationButton'
 import { buildMotelPath, extractMotelId } from '@/lib/utils'
 
 const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://moteis.bdsmbrazil.com.br'
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+const UUID_PREFIX_REGEX = /^[0-9a-f]{8}$/i
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
     const { id: routeParam } = await params
     const motelId = extractMotelId(routeParam)
     const supabase = await createClient()
 
-    const { data: motelData } = await supabase
-        .from('motels')
-        .select('id, name, description, address, photos')
-        .eq('id', motelId)
-        .single()
+    let motelData: { id: string; name: string; description: string; address: string; photos: string[] } | null = null
+    if (UUID_REGEX.test(motelId) || motelId === '1' || motelId === '2') {
+        const { data } = await supabase
+            .from('motels')
+            .select('id, name, description, address, photos')
+            .eq('id', motelId)
+            .single()
+        motelData = data
+    } else if (UUID_PREFIX_REGEX.test(motelId)) {
+        const { data } = await supabase
+            .from('motels')
+            .select('id, name, description, address, photos')
+            .ilike('id', `${motelId}-%`)
+            .limit(1)
+        motelData = data?.[0] || null
+    } else {
+        const { data } = await supabase
+            .from('motels')
+            .select('id, name, description, address, photos')
+            .eq('id', motelId)
+            .single()
+        motelData = data
+    }
 
     if (!motelData) {
         return {
@@ -76,11 +96,29 @@ export default async function MotelDetailsPage({ params }: { params: Promise<{ i
     const id = extractMotelId(routeParam)
     const supabase = await createClient()
 
-    const { data: motelData, error } = await supabase
-        .from('motels')
-        .select('*')
-        .eq('id', id)
-        .single()
+    let motelData: Motel | null = null
+    if (UUID_REGEX.test(id) || id === '1' || id === '2') {
+        const { data } = await supabase
+            .from('motels')
+            .select('*')
+            .eq('id', id)
+            .single()
+        motelData = data as Motel | null
+    } else if (UUID_PREFIX_REGEX.test(id)) {
+        const { data } = await supabase
+            .from('motels')
+            .select('*')
+            .ilike('id', `${id}-%`)
+            .limit(1)
+        motelData = (data?.[0] as Motel) || null
+    } else {
+        const { data } = await supabase
+            .from('motels')
+            .select('*')
+            .eq('id', id)
+            .single()
+        motelData = data as Motel | null
+    }
 
     // Handle mock cases for demonstration if DB is empty
     let motel: Motel | null = motelData as Motel
