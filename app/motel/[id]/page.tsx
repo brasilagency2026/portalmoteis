@@ -27,34 +27,47 @@ const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://moteis.bdsmbrazil
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 const UUID_PREFIX_REGEX = /^[0-9a-f]{8}$/i
 
+async function resolveMotelByParam(
+    supabase: Awaited<ReturnType<typeof createClient>>,
+    routeParam: string,
+    selectFields: string
+) {
+    const extracted = extractMotelId(routeParam)
+
+    if (UUID_REGEX.test(extracted) || extracted === '1' || extracted === '2') {
+        const { data } = await supabase
+            .from('motels')
+            .select(selectFields)
+            .eq('id', extracted)
+            .single()
+        return data || null
+    }
+
+    if (UUID_PREFIX_REGEX.test(extracted)) {
+        const { data } = await supabase
+            .from('motels')
+            .select(selectFields)
+            .ilike('id', `${extracted}-%`)
+            .limit(1)
+        return data?.[0] || null
+    }
+
+    const { data } = await supabase
+        .from('motels')
+        .select(selectFields)
+        .limit(500)
+
+    if (!data?.length) return null
+
+    const found = data.find((motel: any) => buildMotelPath(motel.name, motel.id, motel.address).replace('/motel/', '') === routeParam)
+    return found || null
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
     const { id: routeParam } = await params
-    const motelId = extractMotelId(routeParam)
     const supabase = await createClient()
 
-    let motelData: { id: string; name: string; description: string; address: string; photos: string[] } | null = null
-    if (UUID_REGEX.test(motelId) || motelId === '1' || motelId === '2') {
-        const { data } = await supabase
-            .from('motels')
-            .select('id, name, description, address, photos')
-            .eq('id', motelId)
-            .single()
-        motelData = data
-    } else if (UUID_PREFIX_REGEX.test(motelId)) {
-        const { data } = await supabase
-            .from('motels')
-            .select('id, name, description, address, photos')
-            .ilike('id', `${motelId}-%`)
-            .limit(1)
-        motelData = data?.[0] || null
-    } else {
-        const { data } = await supabase
-            .from('motels')
-            .select('id, name, description, address, photos')
-            .eq('id', motelId)
-            .single()
-        motelData = data
-    }
+    const motelData = await resolveMotelByParam(supabase, routeParam, 'id, name, description, address, photos')
 
     if (!motelData) {
         return {
@@ -93,37 +106,16 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function MotelDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id: routeParam } = await params
-    const id = extractMotelId(routeParam)
     const supabase = await createClient()
 
-    let motelData: Motel | null = null
-    if (UUID_REGEX.test(id) || id === '1' || id === '2') {
-        const { data } = await supabase
-            .from('motels')
-            .select('*')
-            .eq('id', id)
-            .single()
-        motelData = data as Motel | null
-    } else if (UUID_PREFIX_REGEX.test(id)) {
-        const { data } = await supabase
-            .from('motels')
-            .select('*')
-            .ilike('id', `${id}-%`)
-            .limit(1)
-        motelData = (data?.[0] as Motel) || null
-    } else {
-        const { data } = await supabase
-            .from('motels')
-            .select('*')
-            .eq('id', id)
-            .single()
-        motelData = data as Motel | null
-    }
+    const motelData = await resolveMotelByParam(supabase, routeParam, '*') as Motel | null
 
     // Handle mock cases for demonstration if DB is empty
     let motel: Motel | null = motelData as Motel
 
-    if (!motel && (id === '1' || id === '2')) {
+    if (!motel) {
+        const extractedId = extractMotelId(routeParam)
+        if (extractedId === '1' || extractedId === '2') {
         const mocks: Record<string, Motel> = {
             '1': {
                 id: '1',
@@ -173,7 +165,8 @@ export default async function MotelDetailsPage({ params }: { params: Promise<{ i
                 tripadvisor: ''
             }
         }
-        motel = mocks[id]
+        motel = mocks[extractedId]
+        }
     }
 
     if (!motel) {
