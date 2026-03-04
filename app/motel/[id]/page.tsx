@@ -54,7 +54,7 @@ async function resolveMotelByParam<T extends MotelLookupBase>(
             .select(selectFields)
             .eq('id', extracted)
             .single()
-        return (data as T) || null
+        return (data as unknown as T) || null
     }
 
     if (UUID_PREFIX_REGEX.test(extracted)) {
@@ -63,7 +63,7 @@ async function resolveMotelByParam<T extends MotelLookupBase>(
             .select(selectFields)
             .ilike('id', `${extracted}-%`)
             .limit(1)
-        return (data?.[0] as T) || null
+        return (data?.[0] as unknown as T) || null
     }
 
     const { data } = await supabase
@@ -71,7 +71,7 @@ async function resolveMotelByParam<T extends MotelLookupBase>(
         .select(selectFields)
         .limit(500)
 
-    const rows = (data as T[] | null) || null
+    const rows = (data as unknown as T[] | null) || null
     if (!rows?.length) return null
 
     const found = rows.find((motel) => buildMotelPath(motel.name, motel.id, motel.address || undefined).replace('/motel/', '') === routeParam)
