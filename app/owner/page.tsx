@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Check, ArrowLeft, Sparkles, Crown } from 'lucide-react'
 import { createBrowserClient } from '@supabase/ssr'
@@ -9,8 +9,11 @@ import PremiumPayPalButton from '@/components/PremiumPayPalButton'
 
 export default function OwnerPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+
+  const upgradeRequested = searchParams?.get('upgrade') === 'true'
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -74,8 +77,14 @@ export default function OwnerPage() {
           return
         }
 
-        // If free, redirect to dashboard
+        // If free, redirect to dashboard unless user explicitly requested upgrade flow
         if (motelData.plan === 'free') {
+          if (upgradeRequested) {
+            setIsAuthenticated(true)
+            setIsLoading(false)
+            return
+          }
+
           router.push('/owner/dashboard')
           return
         }
@@ -89,7 +98,7 @@ export default function OwnerPage() {
       }
     }
     checkAuth()
-  }, [router])
+  }, [router, upgradeRequested])
 
   const paypalClientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID
   const paypalPlanId = process.env.NEXT_PUBLIC_PAYPAL_PREMIUM_PLAN_ID
