@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Check, ArrowLeft, Sparkles, Crown } from 'lucide-react'
@@ -8,6 +8,14 @@ import { createBrowserClient } from '@supabase/ssr'
 import PremiumPayPalButton from '@/components/PremiumPayPalButton'
 
 export default function OwnerPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen neon-bg text-white flex items-center justify-center">Carregando...</div>}>
+      <OwnerPageContent />
+    </Suspense>
+  )
+}
+
+function OwnerPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [isAuthenticated, setIsAuthenticated] = useState(false)
