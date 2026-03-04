@@ -21,14 +21,18 @@ export default function PremiumPayPalButton({ planId, clientId, isAuthenticated 
   const [feedback, setFeedback] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [sdkReady, setSdkReady] = useState(false)
+  const normalizedClientId = (clientId || '').trim().replace(/^['"]+|['"]+$/g, '')
+  const maskedClientId = normalizedClientId
+    ? `${normalizedClientId.slice(0, 6)}...${normalizedClientId.slice(-4)} (len:${normalizedClientId.length})`
+    : 'vazio'
 
-  const isConfigured = Boolean(planId && clientId)
+  const isConfigured = Boolean(planId && normalizedClientId)
 
   useEffect(() => {
-    if (!isAuthenticated || !isConfigured || !clientId) return
+    if (!isAuthenticated || !isConfigured || !normalizedClientId) return
 
     const scriptId = 'paypal-sdk-subscription-script'
-    const sdkSrc = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(clientId.trim())}&vault=true&intent=subscription`
+    const sdkSrc = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(normalizedClientId)}&vault=true&intent=subscription`
 
     const existing = document.getElementById(scriptId) as HTMLScriptElement | null
     if (existing) {
@@ -51,11 +55,11 @@ export default function PremiumPayPalButton({ planId, clientId, isAuthenticated 
       setFeedback(null)
     }
     script.onerror = () => {
-      setFeedback('❌ Falha ao carregar SDK PayPal. Verifique client ID e bloqueadores de script no navegador.')
+      setFeedback(`❌ Falha ao carregar SDK PayPal. client-id: ${maskedClientId}`)
     }
 
     document.head.appendChild(script)
-  }, [isAuthenticated, isConfigured, clientId])
+  }, [isAuthenticated, isConfigured, normalizedClientId, maskedClientId])
 
   useEffect(() => {
     if (!sdkReady || !isConfigured || !planId || !containerRef.current || !window.paypal?.Buttons) return
