@@ -11,6 +11,7 @@ interface Motel {
   id: string
   name: string
   city: string
+  address?: string
   status: 'active' | 'inactive' | 'pending'
   plan: 'free' | 'premium'
   created_at: string
