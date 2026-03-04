@@ -59,14 +59,21 @@ function extractAddressLocation(address?: string) {
   const raw = address.trim()
   if (!raw) return ''
 
-  const partsByDash = raw.split('-').map((part) => part.trim()).filter(Boolean)
-  const locationCandidate = partsByDash.length > 1 ? partsByDash[partsByDash.length - 1] : raw
+  const cityUfMatch = raw.match(/(?:-|,)\s*([^,-]+)\s*,\s*([a-z]{2})$/i)
+  if (cityUfMatch) {
+    const city = cityUfMatch[1]?.trim() || ''
+    const uf = cityUfMatch[2]?.trim().toUpperCase() || ''
+    return city && uf ? `${city} ${uf}` : ''
+  }
 
-  const partsByComma = locationCandidate.split(',').map((part) => part.trim()).filter(Boolean)
-  const city = partsByComma[0] || ''
-  const uf = partsByComma[1] || ''
+  const cityDashUfMatch = raw.match(/-\s*([^,-]+)\s*-\s*([a-z]{2})$/i)
+  if (cityDashUfMatch) {
+    const city = cityDashUfMatch[1]?.trim() || ''
+    const uf = cityDashUfMatch[2]?.trim().toUpperCase() || ''
+    return city && uf ? `${city} ${uf}` : ''
+  }
 
-  return [city, uf].filter(Boolean).join(' ')
+  return ''
 }
 
 function truncateSegment(segment: string, maxLength: number) {
