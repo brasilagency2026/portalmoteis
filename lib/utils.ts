@@ -15,7 +15,6 @@ export function slugify(value: string) {
 }
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-const TARGET_ROUTE_SEGMENT_MIN = 55
 const TARGET_ROUTE_SEGMENT_MAX = 65
 
 function parseBase36ToBigInt(value: string) {
@@ -70,29 +69,6 @@ function extractAddressLocation(address?: string) {
   return [city, uf].filter(Boolean).join(' ')
 }
 
-function collectAddressKeywords(address?: string) {
-  const location = slugify(extractAddressLocation(address))
-  const addressSlug = slugify(address || '')
-
-  const tokens = addressSlug
-    .split('-')
-    .filter(Boolean)
-    .filter((token) => token.length >= 2)
-
-  const uniqueTokens: string[] = []
-  for (const token of tokens) {
-    if (!uniqueTokens.includes(token)) uniqueTokens.push(token)
-  }
-
-  if (!location) {
-    return uniqueTokens.join('-')
-  }
-
-  const locationTokens = location.split('-').filter(Boolean)
-  const extraTokens = uniqueTokens.filter((token) => !locationTokens.includes(token))
-  return [location, ...extraTokens].filter(Boolean).join('-')
-}
-
 function truncateSegment(segment: string, maxLength: number) {
   if (segment.length <= maxLength) return segment
   return segment.slice(0, maxLength).replace(/-+$/g, '')
@@ -101,10 +77,9 @@ function truncateSegment(segment: string, maxLength: number) {
 export function buildMotelPath(name: string, id: string, address?: string) {
   const compactId = uuidToCompact(id)
   const maxSlugLength = Math.max(8, TARGET_ROUTE_SEGMENT_MAX - compactId.length - 1)
-  const minSlugLength = Math.max(8, TARGET_ROUTE_SEGMENT_MIN - compactId.length - 1)
 
   let nameSlug = slugify(name) || 'motel'
-  let locationSlug = collectAddressKeywords(address)
+  let locationSlug = slugify(extractAddressLocation(address))
 
   if (nameSlug.length > maxSlugLength) {
     nameSlug = truncateSegment(nameSlug, maxSlugLength)
@@ -117,12 +92,6 @@ export function buildMotelPath(name: string, id: string, address?: string) {
     } else {
       locationSlug = truncateSegment(locationSlug, remaining)
     }
-  }
-
-  if (locationSlug && nameSlug.length + 1 + locationSlug.length < minSlugLength) {
-    const reserved = nameSlug.length + 1
-    const targetForLocation = Math.max(0, minSlugLength - reserved)
-    locationSlug = truncateSegment(locationSlug, Math.min(maxSlugLength - reserved, targetForLocation))
   }
 
   const slug = locationSlug ? `${nameSlug}-${locationSlug}` : nameSlug
