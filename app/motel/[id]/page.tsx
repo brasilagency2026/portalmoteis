@@ -27,11 +27,25 @@ const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://moteis.bdsmbrazil
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 const UUID_PREFIX_REGEX = /^[0-9a-f]{8}$/i
 
-async function resolveMotelByParam(
+type MotelLookupBase = {
+    id: string
+    name: string
+    address?: string | null
+}
+
+type MotelMetadataLookup = {
+    id: string
+    name: string
+    description: string | null
+    address: string | null
+    photos: string[] | null
+}
+
+async function resolveMotelByParam<T extends MotelLookupBase>(
     supabase: Awaited<ReturnType<typeof createClient>>,
     routeParam: string,
     selectFields: string
-) {
+): Promise<T | null> {
     const extracted = extractMotelId(routeParam)
 
     if (UUID_REGEX.test(extracted) || extracted === '1' || extracted === '2') {
@@ -40,7 +54,7 @@ async function resolveMotelByParam(
             .select(selectFields)
             .eq('id', extracted)
             .single()
-        return data || null
+        return (data as T) || null
     }
 
     if (UUID_PREFIX_REGEX.test(extracted)) {
@@ -49,7 +63,7 @@ async function resolveMotelByParam(
             .select(selectFields)
             .ilike('id', `${extracted}-%`)
             .limit(1)
-        return data?.[0] || null
+        return (data?.[0] as T) || null
     }
 
     const { data } = await supabase
@@ -57,9 +71,10 @@ async function resolveMotelByParam(
         .select(selectFields)
         .limit(500)
 
-    if (!data?.length) return null
+    const rows = (data as T[] | null) || null
+    if (!rows?.length) return null
 
-    const found = data.find((motel: any) => buildMotelPath(motel.name, motel.id, motel.address).replace('/motel/', '') === routeParam)
+    const found = rows.find((motel) => buildMotelPath(motel.name, motel.id, motel.address || undefined).replace('/motel/', '') === routeParam)
     return found || null
 }
 
@@ -67,7 +82,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     const { id: routeParam } = await params
     const supabase = await createClient()
 
-    const motelData = await resolveMotelByParam(supabase, routeParam, 'id, name, description, address, photos')
+    const motelData = await resolveMotelByParam<MotelMetadataLookup>(supabase, routeParam, 'id, name, description, address, photos')
 
     if (!motelData) {
         return {
@@ -77,10 +92,10 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
         }
     }
 
-    const canonicalPath = buildMotelPath(motelData.name, motelData.id, motelData.address)
+    const canonicalPath = buildMotelPath(motelData.name, motelData.id, motelData.address || undefined)
     const canonicalUrl = `${appBaseUrl}${canonicalPath}`
     const image = motelData.photos?.[0] || '/favicon.ico'
-    const description = motelData.description || `Conheça ${motelData.name} em ${motelData.address}.`
+    const description = motelData.description || `Conheça ${motelData.name}${motelData.address ? ` em ${motelData.address}` : ''}.`
 
     return {
         title: `${motelData.name} | Motéis BDSM`,
@@ -108,7 +123,7 @@ export default async function MotelDetailsPage({ params }: { params: Promise<{ i
     const { id: routeParam } = await params
     const supabase = await createClient()
 
-    const motelData = await resolveMotelByParam(supabase, routeParam, '*') as Motel | null
+    const motelData = await resolveMotelByParam<Motel>(supabase, routeParam, '*')
 
     // Handle mock cases for demonstration if DB is empty
     let motel: Motel | null = motelData as Motel

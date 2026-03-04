@@ -82,11 +82,18 @@ function truncateSegment(segment: string, maxLength: number) {
 }
 
 export function buildMotelPath(name: string, id: string, address?: string) {
-  const maxSlugLength = TARGET_ROUTE_SEGMENT_MAX
-
   let nameSlug = slugify(name) || 'motel'
-  nameSlug = truncateSegment(nameSlug, maxSlugLength)
-  return `/motel/${nameSlug}`
+  let locationSlug = slugify(extractAddressLocation(address))
+
+  if (locationSlug) {
+    const maxNameLength = Math.max(8, TARGET_ROUTE_SEGMENT_MAX - locationSlug.length - 1)
+    nameSlug = truncateSegment(nameSlug, maxNameLength)
+  } else {
+    nameSlug = truncateSegment(nameSlug, TARGET_ROUTE_SEGMENT_MAX)
+  }
+
+  const slug = locationSlug ? `${nameSlug}-${locationSlug}` : nameSlug
+  return `/motel/${slug}`
 }
 
 export function extractMotelId(param: string) {
