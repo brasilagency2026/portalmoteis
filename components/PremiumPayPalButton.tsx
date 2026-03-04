@@ -20,7 +20,6 @@ export default function PremiumPayPalButton({ planId, clientId, isAuthenticated 
   const options = useMemo(
     () => ({
       clientId: clientId || '',
-      'client-id': clientId || '',
       vault: true,
       intent: 'subscription',
       currency: 'BRL',
@@ -112,7 +111,7 @@ export default function PremiumPayPalButton({ planId, clientId, isAuthenticated 
           }}
           onError={(error: unknown) => {
             const message = error instanceof Error ? error.message : 'Erro no checkout PayPal'
-            setFeedback(`❌ ${message}`)
+            setFeedback(`❌ ${message}. Verifique se o Client ID e o Plan ID são do mesmo ambiente (live/sandbox).`)
           }}
         />
       </PayPalScriptProvider>
