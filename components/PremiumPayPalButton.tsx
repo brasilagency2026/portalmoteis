@@ -38,6 +38,7 @@ export default function PremiumPayPalButton({ planId, clientId }: Props) {
 
   const options = useMemo(
     () => ({
+      clientId: clientId || '',
       'client-id': clientId || '',
       vault: true,
       intent: 'subscription',
