@@ -195,7 +195,7 @@ function OwnerPageContent() {
                 <span className="relative z-10 font-extrabold">Assinatura mensal via PayPal</span>
                 <span className="absolute top-1 right-2 bg-red-600 text-white text-xs px-2 py-0.5 rounded-full font-extrabold">DESTAQUE</span>
               </div>
-              <PremiumPayPalButton planId={paypalPlanId} clientId={paypalClientId} />
+              <PremiumPayPalButton planId={paypalPlanId} clientId={paypalClientId} isAuthenticated={isAuthenticated} />
             </div>
             
             <p className="text-xs text-zinc-500 mt-4">Pagamento via cartão com faturamento mensal. Cancelamento a qualquer momento.</p>

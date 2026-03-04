@@ -1,40 +1,21 @@
 'use client'
 
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createBrowserClient } from '@supabase/ssr'
 import { PayPalButtons, PayPalScriptProvider } from '@paypal/react-paypal-js'
 
 type Props = {
   planId?: string
   clientId?: string
+  isAuthenticated?: boolean
 }
 
-export default function PremiumPayPalButton({ planId, clientId }: Props) {
+export default function PremiumPayPalButton({ planId, clientId, isAuthenticated = false }: Props) {
   const router = useRouter()
   const [feedback, setFeedback] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [checkingAuth, setCheckingAuth] = useState(true)
 
   const isConfigured = Boolean(planId && clientId)
-
-  // Vérifier l'authentification
-  useEffect(() => {
-    const checkAuth = async () => {
-      const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-      )
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      console.log('👤 Utilisateur authentifié:', user?.email)
-      setIsAuthenticated(!!user)
-      setCheckingAuth(false)
-    }
-    checkAuth()
-  }, [])
 
   const options = useMemo(
     () => ({
@@ -48,10 +29,6 @@ export default function PremiumPayPalButton({ planId, clientId }: Props) {
     [clientId]
   )
 
-  if (checkingAuth) {
-    return <div className="w-full text-sm text-zinc-400">Verificando autenticação...</div>
-  }
-
   if (!isAuthenticated) {
     return (
       <div className="w-full rounded-xl border border-yellow-500/40 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-200">
@@ -64,9 +41,14 @@ export default function PremiumPayPalButton({ planId, clientId }: Props) {
   }
 
   if (!isConfigured) {
+    const missing = [
+      !clientId ? 'NEXT_PUBLIC_PAYPAL_CLIENT_ID' : null,
+      !planId ? 'NEXT_PUBLIC_PAYPAL_PREMIUM_PLAN_ID' : null,
+    ].filter(Boolean).join(', ')
+
     return (
       <div className="w-full rounded-xl border border-yellow-500/40 bg-yellow-500/10 px-4 py-3 text-sm text-yellow-200">
-        Configure NEXT_PUBLIC_PAYPAL_CLIENT_ID e NEXT_PUBLIC_PAYPAL_PREMIUM_PLAN_ID para ativar o pagamento PayPal.
+        Configure as variáveis {missing} para ativar o pagamento PayPal.
       </div>
     )
   }
