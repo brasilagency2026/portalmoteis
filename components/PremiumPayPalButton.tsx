@@ -22,9 +22,6 @@ export default function PremiumPayPalButton({ planId, clientId, isAuthenticated 
   const [loading, setLoading] = useState(false)
   const [sdkReady, setSdkReady] = useState(false)
   const normalizedClientId = (clientId || '').trim().replace(/^['"]+|['"]+$/g, '')
-  const maskedClientId = normalizedClientId
-    ? `${normalizedClientId.slice(0, 6)}...${normalizedClientId.slice(-4)} (len:${normalizedClientId.length})`
-    : 'vazio'
 
   const isConfigured = Boolean(planId && normalizedClientId)
 
@@ -55,11 +52,11 @@ export default function PremiumPayPalButton({ planId, clientId, isAuthenticated 
       setFeedback(null)
     }
     script.onerror = () => {
-      setFeedback(`❌ Falha ao carregar SDK PayPal. client-id: ${maskedClientId}`)
+      setFeedback('❌ Falha ao carregar SDK PayPal. Verifique client ID e bloqueadores de script no navegador.')
     }
 
     document.head.appendChild(script)
-  }, [isAuthenticated, isConfigured, normalizedClientId, maskedClientId])
+  }, [isAuthenticated, isConfigured, normalizedClientId])
 
   useEffect(() => {
     if (!sdkReady || !isConfigured || !planId || !containerRef.current || !window.paypal?.Buttons) return
