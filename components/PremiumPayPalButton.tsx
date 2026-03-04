@@ -112,8 +112,13 @@ export default function PremiumPayPalButton({ planId, clientId }: Props) {
               }
 
               setFeedback('✅ Assinatura ativa! Redirecionando...')
-              console.log('✅ Sucesso! Redirecionando para /owner/create-motel?plan=premium')
-              router.push('/owner/create-motel?plan=premium')
+              if (result?.upgradedExistingMotel) {
+                console.log('✅ Sucesso! Motel existente atualizado para premium. Redirecionando para /owner/dashboard')
+                router.push('/owner/dashboard')
+              } else {
+                console.log('✅ Sucesso! Redirecionando para /owner/create-motel?plan=premium')
+                router.push('/owner/create-motel?plan=premium')
+              }
               router.refresh()
             } catch (error: any) {
               console.error('❌ Erro:', error)
