@@ -19,6 +19,7 @@ interface Motel {
   id: string
   name: string
   city: string
+  address?: string
   status: 'active' | 'inactive' | 'pending'
   plan: 'free' | 'premium'
   created_at: string
@@ -437,7 +438,7 @@ export default function AdminDashboard() {
                       <td className="px-6 py-3 text-center">
                         <div className="flex items-center justify-center gap-2">
                           <Link
-                            href={buildMotelPath(motel.name, motel.id)}
+                            href={buildMotelPath(motel.name, motel.id, motel.address)}
                             target="_blank"
                             className="text-blue-400 hover:text-blue-300 transition text-xs px-2 py-1 rounded border border-blue-600"
                             title="Ver motel"

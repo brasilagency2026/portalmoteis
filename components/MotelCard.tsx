@@ -6,7 +6,7 @@ import NavigationButton from '@/components/NavigationButton'
 import { buildMotelPath } from '@/lib/utils'
 
 export default function MotelCard({ motel, distance, isPremiumClose }: { motel: Motel, distance?: number | null, isPremiumClose?: boolean }) {
-  const motelPath = buildMotelPath(motel.name, motel.id)
+  const motelPath = buildMotelPath(motel.name, motel.id, motel.address)
 
   return (
     <div className="bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden shadow-lg border border-zinc-100 dark:border-zinc-800 hover:shadow-xl transition-all duration-300 group flex flex-col h-full">

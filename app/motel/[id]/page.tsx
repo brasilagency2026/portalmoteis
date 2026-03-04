@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
         }
     }
 
-    const canonicalPath = buildMotelPath(motelData.name, motelData.id)
+    const canonicalPath = buildMotelPath(motelData.name, motelData.id, motelData.address)
     const canonicalUrl = `${appBaseUrl}${canonicalPath}`
     const image = motelData.photos?.[0] || '/favicon.ico'
     const description = motelData.description || `Conheça ${motelData.name} em ${motelData.address}.`
@@ -142,7 +142,7 @@ export default async function MotelDetailsPage({ params }: { params: Promise<{ i
         notFound()
     }
 
-    const canonicalPath = buildMotelPath(motel.name, motel.id)
+    const canonicalPath = buildMotelPath(motel.name, motel.id, motel.address)
     if (routeParam !== canonicalPath.replace('/motel/', '')) {
         redirect(canonicalPath)
     }

@@ -151,7 +151,7 @@ export default function MotelMap({ motels, userLocation }: { motels: Motel[], us
                 </div>
                 
                 <Link 
-                  href={buildMotelPath(motel.name, motel.id)}
+                  href={buildMotelPath(motel.name, motel.id, motel.address)}
                   className="block w-full text-center bg-black !text-white py-1.5 rounded-full text-sm font-medium hover:bg-zinc-800 transition-colors btn-3d"
                 >
                   Ver Detalhes

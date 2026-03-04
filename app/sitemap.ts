@@ -23,12 +23,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = createClient(supabaseUrl, supabaseAnonKey)
   const { data: motels } = await supabase
     .from('motels')
-    .select('id, name, created_at, status')
+    .select('id, name, address, created_at, status')
     .eq('status', 'active')
 
   const motelRoutes: MetadataRoute.Sitemap =
     motels?.map((motel) => ({
-      url: `${appBaseUrl}${buildMotelPath(motel.name, motel.id)}`,
+      url: `${appBaseUrl}${buildMotelPath(motel.name, motel.id, motel.address)}`,
       lastModified: motel.created_at ? new Date(motel.created_at) : undefined,
       changeFrequency: 'weekly',
       priority: 0.9,
