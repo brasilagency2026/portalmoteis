@@ -14,7 +14,7 @@ function getNotificationRecipients() {
 
 export async function sendSuperAdminNewSignupEmail({ newUserEmail }: NewSignupNotificationParams) {
   const apiKey = process.env.RESEND_API_KEY
-  const from = process.env.RESEND_FROM_EMAIL || process.env.SUPER_ADMIN_NOTIFICATION_EMAIL || ''
+  const from = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
   const recipients = getNotificationRecipients()
 
   if (!apiKey || !from || recipients.length === 0) {

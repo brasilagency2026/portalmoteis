@@ -53,7 +53,15 @@ export async function signup(formData: FormData) {
   }
 
   try {
-    await sendSuperAdminNewSignupEmail({ newUserEmail: data.email })
+    const notifyResult = await sendSuperAdminNewSignupEmail({ newUserEmail: data.email })
+    if (!notifyResult.sent) {
+      console.warn('signup-notification-skipped', {
+        reason: notifyResult.reason,
+        hasResendApiKey: Boolean(process.env.RESEND_API_KEY),
+        hasRecipient: Boolean(process.env.SUPER_ADMIN_NOTIFICATION_EMAIL),
+        hasFromEmail: Boolean(process.env.RESEND_FROM_EMAIL),
+      })
+    }
   } catch (notifyError) {
     console.error('signup-notification-error', notifyError)
   }
