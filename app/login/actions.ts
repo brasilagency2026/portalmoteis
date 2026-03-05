@@ -5,6 +5,14 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { sendSuperAdminNewSignupEmail } from '@/lib/email'
 
+function getAuthRedirectBaseUrl() {
+  return (
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.APP_URL ||
+    'https://moteis.bdsmbrazil.com.br'
+  )
+}
+
 export async function login(formData: FormData) {
   const supabase = await createClient()
 
@@ -31,7 +39,14 @@ export async function signup(formData: FormData) {
     password: formData.get('password') as string,
   }
 
-  const { error } = await supabase.auth.signUp(data)
+  const emailRedirectTo = `${getAuthRedirectBaseUrl()}/auth/callback`
+
+  const { error } = await supabase.auth.signUp({
+    ...data,
+    options: {
+      emailRedirectTo,
+    },
+  })
 
   if (error) {
     redirect('/login?error=Could not authenticate user')
