@@ -17,11 +17,11 @@ import {
     ArrowLeft,
     CheckCircle2
 } from 'lucide-react'
-import MotelMapDynamic from '@/components/MotelMapDynamic'
 import ImageCarousel from '@/components/ImageCarousel'
 import { Motel } from '@/types'
 import NavigationButton from '@/components/NavigationButton'
 import { buildMotelPath, extractMotelId } from '@/lib/utils'
+import MotelDetailsLocationMap from '@/components/MotelDetailsLocationMap'
 
 const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://moteis.bdsmbrazil.com.br'
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
@@ -273,7 +273,7 @@ export default async function MotelDetailsPage({ params }: { params: Promise<{ i
                         {/* Interactive Map */}
                         <section>
                             <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 mb-6 font-primary">Localização</h2>
-                            <MotelMapDynamic motels={[motel]} userLocation={null} />
+                            <MotelDetailsLocationMap motel={motel} />
                         </section>
                     </div>
 
