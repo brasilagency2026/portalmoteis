@@ -33,6 +33,13 @@ const premiumIcon = L.icon({
   shadowSize: [41, 41]
 });
 
+const userLocationIcon = L.divIcon({
+  className: 'user-location-marker',
+  html: '<div style="width:18px;height:18px;border-radius:9999px;background:#2563eb;border:3px solid #fff;box-shadow:0 0 0 4px rgba(37,99,235,.25);"></div>',
+  iconSize: [18, 18],
+  iconAnchor: [9, 9],
+})
+
 function AutoFitBounds({ userLocation, motels }: { userLocation: [number, number] | null, motels: Motel[] }) {
   const map = useMap()
   
@@ -66,8 +73,10 @@ function AutoFitBounds({ userLocation, motels }: { userLocation: [number, number
   }, [userLocation, motels, map])
 
   return userLocation === null ? null : (
-    <Marker position={userLocation} icon={icon}>
-      <Popup>Você está aqui</Popup>
+    <Marker position={userLocation} icon={userLocationIcon}>
+      <Popup>
+        <div className="text-sm font-semibold text-blue-700">📍 Minha posição</div>
+      </Popup>
     </Marker>
   )
 }

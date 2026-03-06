@@ -339,6 +339,7 @@ export default function HomeContent({ motels }: Props) {
                     motel={motel} 
                     distance={distance}
                     isPremiumClose={isPremiumClose}
+                    hasUserLocation={Boolean(userLocation)}
                   />
                 )
               })}

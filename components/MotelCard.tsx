@@ -1,11 +1,11 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Motel } from '@/types'
-import { MapPin, MessageCircle, Phone, Star } from 'lucide-react'
+import { LocateFixed, MapPin, MessageCircle, Star } from 'lucide-react'
 import NavigationButton from '@/components/NavigationButton'
 import { buildMotelPath } from '@/lib/utils'
 
-export default function MotelCard({ motel, distance, isPremiumClose }: { motel: Motel, distance?: number | null, isPremiumClose?: boolean }) {
+export default function MotelCard({ motel, distance, isPremiumClose, hasUserLocation }: { motel: Motel, distance?: number | null, isPremiumClose?: boolean, hasUserLocation?: boolean }) {
   const motelPath = buildMotelPath(motel.name, motel.id, motel.address)
 
   return (
@@ -51,6 +51,18 @@ export default function MotelCard({ motel, distance, isPremiumClose }: { motel: 
           <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-50 mb-2 group-hover:text-red-600 transition-colors line-clamp-1">{motel.name}</h3>
         </Link>
         <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4 line-clamp-2 flex-grow">{motel.address}</p>
+        {hasUserLocation && distance !== undefined && distance !== null && (
+          <p className="text-xs text-blue-600 dark:text-blue-400 font-semibold mb-3 flex items-center gap-1">
+            <LocateFixed size={14} />
+            Você está a {distance.toFixed(1)} km deste motel
+          </p>
+        )}
+        {hasUserLocation && (distance === undefined || distance === null) && (
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mb-3 flex items-center gap-1">
+            <LocateFixed size={14} />
+            Sua localização está ativa, mas este motel não tem coordenadas GPS
+          </p>
+        )}
         
         <div className="flex items-center justify-between mt-auto pt-4 border-t border-zinc-100 dark:border-zinc-800">
           <div className="flex gap-2">
