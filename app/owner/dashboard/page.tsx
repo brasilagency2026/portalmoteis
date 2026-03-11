@@ -173,6 +173,18 @@ export default function OwnerDashboard() {
                 </span>
               </div>
             </div>
+            {/* Action buttons */}
+            <div className="flex gap-4 mt-6">
+              <Link href={`/owner/edit-motel/${motel.id}`} className="inline-flex items-center gap-2 px-6 py-2 bg-blue-700 hover:bg-blue-800 rounded-lg font-semibold text-white transition-all">
+                <Edit2 size={18} /> Editar Motel
+              </Link>
+              {motel.plan === 'free' && (
+                <Link href="/owner" className="inline-flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-yellow-500 via-yellow-600 to-orange-600 hover:from-yellow-600 hover:via-orange-600 hover:to-orange-700 rounded-lg font-semibold text-black transition-all">
+                  <Crown size={18} /> Fazer Upgrade Premium
+                </Link>
+              )}
+              </div>
+            </div>
             <div className="bg-gray-900 border border-yellow-600/30 rounded-lg p-6">
               <h3 className="text-lg font-bold text-white mb-3">💡 Dicas para aumentar visibilidade</h3>
               <ul className="text-gray-300 space-y-2 text-sm">
