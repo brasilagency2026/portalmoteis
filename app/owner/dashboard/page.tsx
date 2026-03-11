@@ -211,9 +211,7 @@ export default function OwnerDashboard() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-              {/* Action Buttons (supprimées avec stats) */}
-            </div>
+              {/* Plus de stats ni d'action buttons */}
 
             {/* Help Section */}
             <div className="bg-gray-900 border border-yellow-600/30 rounded-lg p-6">
