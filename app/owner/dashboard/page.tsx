@@ -213,19 +213,19 @@ export default function OwnerDashboard() {
 
               {/* Plus de stats ni d'action buttons */}
 
-            {/* Help Section */}
-            <div className="bg-gray-900 border border-yellow-600/30 rounded-lg p-6">
-              <h3 className="text-lg font-bold text-white mb-3">💡 Dicas para aumentar visibilidade</h3>
-              <ul className="text-gray-300 space-y-2 text-sm">
-                <li>✓ Use fotos em alta qualidade (qualidade Premium recomendada)</li>
-                <li>✓ Mantenha seus horários de funcionamento atualizados</li>
-                <li>✓ Deixe seu WhatsApp sempre ativo para respostas rápidas</li>
-                <li>✓ Atualize sua descrição regularmente com novos serviços</li>
-              </ul>
+              {/* Help Section */}
+              <div className="bg-gray-900 border border-yellow-600/30 rounded-lg p-6">
+                <h3 className="text-lg font-bold text-white mb-3">💡 Dicas para aumentar visibilidade</h3>
+                <ul className="text-gray-300 space-y-2 text-sm">
+                  <li>✓ Use fotos em alta qualidade (qualidade Premium recomendada)</li>
+                  <li>✓ Mantenha seus horários de funcionamento atualizados</li>
+                  <li>✓ Deixe seu WhatsApp sempre ativo para respostas rápidas</li>
+                  <li>✓ Atualize sua descrição regularmente com novos serviços</li>
+                </ul>
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-    </div>
-  )
+    )
 }
