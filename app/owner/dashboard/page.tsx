@@ -183,10 +183,9 @@ export default function OwnerDashboard() {
             </div>
           </div>
         ) : (
-          <div>
-            {/* Motel Card */}
-            <div className="bg-gray-900 border border-red-500/50 rounded-lg p-6 neon-card">
-              <div className="flex items-start justify-between mb-4">
+          /* Motel Card */
+          <div className="bg-gray-900 border border-red-500/50 rounded-lg p-6 neon-card">
+            <div className="flex items-start justify-between mb-4">
                 <div>
                   <h2 className="text-2xl font-bold text-white">{motel.name}</h2>
                   <p className="text-gray-400">{motel.city}</p>
