@@ -29,7 +29,7 @@ export default function PremiumPayPalButton({ planId, clientId, isAuthenticated 
     if (!isAuthenticated || !isConfigured || !normalizedClientId) return
 
     const scriptId = 'paypal-sdk-subscription-script'
-    const sdkSrc = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(normalizedClientId)}&vault=true&intent=subscription`
+    const sdkSrc = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(normalizedClientId)}&vault=true&intent=subscription&locale=pt_BR`
 
     const existing = document.getElementById(scriptId) as HTMLScriptElement | null
     if (existing) {
