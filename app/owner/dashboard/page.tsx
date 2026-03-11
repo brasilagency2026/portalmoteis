@@ -179,7 +179,7 @@ export default function OwnerDashboard() {
                 <Edit2 size={18} /> Editar Motel
               </Link>
               {motel.plan === 'free' && (
-                <Link href="/owner" className="inline-flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-yellow-500 via-yellow-600 to-orange-600 hover:from-yellow-600 hover:via-orange-600 hover:to-orange-700 rounded-lg font-semibold text-black transition-all">
+                <Link href="/owner/upgrade" className="inline-flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-yellow-500 via-yellow-600 to-orange-600 hover:from-yellow-600 hover:via-orange-600 hover:to-orange-700 rounded-lg font-semibold text-black transition-all">
                   <Crown size={18} /> Fazer Upgrade Premium
                 </Link>
               )}
