@@ -257,7 +257,7 @@ export default function OwnerDashboard() {
                     Upgrade para Premium
                   </Link>
                 )}
-                {motel.plan === 'premium' && (
+                {/* {motel.plan === 'premium' && (
                   <Link
                     href="/owner/statistics"
                     className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 rounded-lg transition-all shadow-lg hover:shadow-yellow-500/50 font-semibold text-black"
@@ -265,7 +265,7 @@ export default function OwnerDashboard() {
                     <TrendingUp size={18} />
                     Estatísticas Avançadas
                   </Link>
-                )}
+                )} */}
               </div>
             </div>
 

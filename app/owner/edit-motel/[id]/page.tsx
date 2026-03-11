@@ -53,6 +53,9 @@ export default function EditMotelPage() {
   const [existingPhotos, setExistingPhotos] = useState<string[]>([])
   const [newPhotos, setNewPhotos] = useState<File[]>([])
   const [removedStoragePaths, setRemovedStoragePaths] = useState<string[]>([])
+  // Limite photo selon le plan (premium: 10, gratuit: 1)
+  const [plan, setPlan] = useState<'free' | 'premium'>('free')
+  const maxPhotos = plan === 'premium' ? 10 : 1;
 
   const sanitizeFileName = (originalName: string): string => {
     const normalized = originalName
@@ -126,6 +129,8 @@ export default function EditMotelPage() {
           : []
 
         setExistingPhotos(motelPhotos)
+        // Détecte le plan du motel
+        if (motel.plan === 'premium') setPlan('premium');
       } catch (err: any) {
         setError(err.message || 'Erro ao carregar motel')
       } finally {
@@ -160,6 +165,11 @@ export default function EditMotelPage() {
       setError(null)
     }
 
+    // Limite stricte selon le plan
+    if (existingPhotos.length + newPhotos.length + accepted.length > maxPhotos) {
+      setError(`Você pode adicionar no máximo ${maxPhotos} fotos no plano ${plan === 'premium' ? 'Premium' : 'Gratuito'}`)
+      return;
+    }
     if (accepted.length > 0) {
       setNewPhotos((prev) => [...prev, ...accepted])
     }

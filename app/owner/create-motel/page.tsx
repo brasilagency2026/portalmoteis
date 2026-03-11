@@ -26,7 +26,7 @@ function CreateMotelContent() {
   const searchParams = useSearchParams()
   const [userPlan, setUserPlan] = useState<'free' | 'premium'>('free')
   const plan = (searchParams?.get('plan') as 'free' | 'premium') || userPlan
-  const maxPhotos = plan === 'premium' ? 15 : 5
+  const maxPhotos = plan === 'premium' ? 10 : 1
   
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

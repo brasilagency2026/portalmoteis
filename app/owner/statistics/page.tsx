@@ -326,7 +326,7 @@ export default function StatisticsPage() {
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-300 text-sm">
             <li className="flex gap-2">
               <span>✓</span>
-              <span><strong>Aumente para 20 fotos:</strong> Motéis com mais fotos recebem 156% mais visualizações</span>
+              <span><strong>Aumente para 10 fotos:</strong> Motéis com mais fotos recebem 156% mais visualizações</span>
             </li>
             <li className="flex gap-2">
               <span>✓</span>
