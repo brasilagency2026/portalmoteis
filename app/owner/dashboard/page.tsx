@@ -157,7 +157,7 @@ export default function OwnerDashboard() {
 
         {/* No Motel Yet */}
         {!motel ? (
-          <>
+          <div className="bg-gray-900 border border-red-500/50 rounded-lg p-8 text-center neon-card">
             <AlertCircle size={48} className="mx-auto mb-4 text-yellow-400 opacity-40" />
             <h2 className="text-2xl font-bold mb-2">Nenhum motel cadastrado ainda</h2>
             <p className="text-gray-400 mb-8">
@@ -183,15 +183,48 @@ export default function OwnerDashboard() {
             </div>
           </div>
         ) : (
-          <>
+          <div>
             {/* Motel Card */}
             <div className="bg-gray-900 border border-red-500/50 rounded-lg p-6 neon-card">
               <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h2 className="text-2xl font-bold text-white">{motel.name}</h2>
+                  <p className="text-gray-400">{motel.city}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`px-3 py-1 rounded-full text-sm font-semibold border ${
+                    motel.status === 'active'
+                      ? 'bg-green-900/30 border-green-600/50 text-green-300'
+                      : motel.status === 'pending'
+                      ? 'bg-yellow-900/30 border-yellow-600/50 text-yellow-300'
+                      : 'bg-gray-900/30 border-gray-600/50 text-gray-300'
+                  }`}>
+                    {motel.status === 'active' ? 'Ativo' : motel.status === 'pending' ? 'Pendente' : 'Inativo'}
+                  </span>
+                  <span className={`px-3 py-1 rounded-full text-sm font-semibold border ${
+                    motel.plan === 'premium'
+                      ? 'bg-purple-900/30 border-purple-600/50 text-purple-300'
+                      : 'bg-blue-900/30 border-blue-600/50 text-blue-300'
+                  }`}>
+                    {motel.plan === 'premium' ? 'Premium' : 'Gratuito'}
+                  </span>
                 </div>
               </div>
+
+              {/* Plus de stats ni d'action buttons */}
+
+              {/* Help Section */}
+              <div className="bg-gray-900 border border-yellow-600/30 rounded-lg p-6">
+                <h3 className="text-lg font-bold text-white mb-3">💡 Dicas para aumentar visibilidade</h3>
+                <ul className="text-gray-300 space-y-2 text-sm">
+                  <li>✓ Use fotos em alta qualidade (qualidade Premium recomendada)</li>
+                  <li>✓ Mantenha seus horários de funcionamento atualizados</li>
+                  <li>✓ Deixe seu WhatsApp sempre ativo para respostas rápidas</li>
+                  <li>✓ Atualize sua descrição regularmente com novos serviços</li>
+                </ul>
+              </div>
             </div>
-          )
-        }
+          </div>
                   <span className={`px-3 py-1 rounded-full text-sm font-semibold border ${
                     motel.status === 'active'
                       ? 'bg-green-900/30 border-green-600/50 text-green-300'
