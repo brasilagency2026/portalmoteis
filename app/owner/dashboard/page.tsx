@@ -157,7 +157,7 @@ export default function OwnerDashboard() {
 
         {/* No Motel Yet */}
         {!motel ? (
-          <div className="bg-gray-900 border border-red-500/50 rounded-lg p-8 text-center neon-card">
+          <>
             <AlertCircle size={48} className="mx-auto mb-4 text-yellow-400 opacity-40" />
             <h2 className="text-2xl font-bold mb-2">Nenhum motel cadastrado ainda</h2>
             <p className="text-gray-400 mb-8">
@@ -183,15 +183,15 @@ export default function OwnerDashboard() {
             </div>
           </div>
         ) : (
-          <div className="space-y-6">
+          <>
             {/* Motel Card */}
             <div className="bg-gray-900 border border-red-500/50 rounded-lg p-6 neon-card">
               <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h2 className="text-2xl font-bold text-white">{motel.name}</h2>
-                  <p className="text-gray-400">{motel.city}</p>
                 </div>
-                <div className="flex items-center gap-2">
+              </div>
+            </div>
+          )
+        }
                   <span className={`px-3 py-1 rounded-full text-sm font-semibold border ${
                     motel.status === 'active'
                       ? 'bg-green-900/30 border-green-600/50 text-green-300'
