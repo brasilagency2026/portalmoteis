@@ -1,19 +1,33 @@
 import Link from 'next/link';
-import { Crown } from 'lucide-react';
+import { Crown, Check } from 'lucide-react';
+import PremiumPayPalButton from '@/components/PremiumPayPalButton';
 
 export default function UpgradePage() {
+  const paypalClientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID;
+  const paypalPlanId = process.env.NEXT_PUBLIC_PAYPAL_PREMIUM_PLAN_ID;
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-950 text-white">
-      <div className="bg-gray-900 border border-yellow-600/30 rounded-lg p-8 shadow-xl text-center">
+      <div className="bg-gray-900 border border-yellow-600/30 rounded-lg p-8 shadow-xl text-center max-w-md w-full">
         <Crown size={48} className="mx-auto mb-4 text-yellow-400" />
-        <h1 className="text-3xl font-bold mb-4">Passer au Plan Premium</h1>
+        <h1 className="text-3xl font-bold mb-4">Passez au Plan Premium</h1>
         <p className="mb-6 text-lg text-gray-300">
-          Débloquez toutes les fonctionnalités premium&nbsp;: jusqu'à 10 photos, meilleure visibilité, et plus encore&nbsp;!
+          Profitez de tous les avantages exclusifs&nbsp;:
         </p>
-        {/* Remplace ce bouton par l'intégration PayPal ou Stripe réelle */}
-        <button className="px-8 py-3 bg-gradient-to-r from-yellow-500 via-yellow-600 to-orange-600 rounded-xl font-bold text-lg text-black shadow-lg hover:scale-105 transition-all mb-4">
-          Procéder au paiement
-        </button>
+        <ul className="text-left mb-6 space-y-2 text-base text-gray-200">
+          <li className="flex items-center gap-2"><Check size={18} className="text-yellow-400" /> Jusqu'à <b>10 photos</b> de votre motel</li>
+          <li className="flex items-center gap-2"><Check size={18} className="text-yellow-400" /> <b>Boost de priorité 20km</b> (votre motel apparaît en tête dans un rayon de 20km)</li>
+          <li className="flex items-center gap-2"><Check size={18} className="text-yellow-400" /> <b>Badge Premium</b> en évidence</li>
+          <li className="flex items-center gap-2"><Check size={18} className="text-yellow-400" /> <b>Section Premium</b> exclusive</li>
+          <li className="flex items-center gap-2"><Check size={18} className="text-yellow-400" /> Visibilité maximale sur la plateforme</li>
+        </ul>
+        <div className="mb-6">
+          <div className="group relative w-full py-4 px-6 bg-gradient-to-r from-yellow-500 via-yellow-600 to-orange-600 rounded-xl font-bold text-lg shadow-2xl text-center flex items-center justify-center gap-3 text-black overflow-hidden mb-3">
+            <Crown size={24} className="relative z-10" />
+            <span className="relative z-10 font-extrabold">Abonnement mensuel via PayPal</span>
+            <span className="absolute top-1 right-2 bg-red-600 text-white text-xs px-2 py-0.5 rounded-full font-extrabold">DESTAQUE</span>
+          </div>
+          <PremiumPayPalButton planId={paypalPlanId} clientId={paypalClientId} isAuthenticated={true} />
+        </div>
         <div>
           <Link href="/owner" className="text-yellow-400 underline hover:text-yellow-300">Retour au dashboard</Link>
         </div>
