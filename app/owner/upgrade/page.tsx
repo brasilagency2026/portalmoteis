@@ -9,7 +9,8 @@ export default function UpgradePage() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-950 text-white">
       <div className="bg-gray-900 border border-yellow-600/30 rounded-lg p-8 shadow-xl text-center max-w-md w-full">
         <Crown size={48} className="mx-auto mb-4 text-yellow-400" />
-        <h1 className="text-3xl font-bold mb-4">Passez au Plan Premium</h1>
+        <h1 className="text-3xl font-bold mb-2">Passez au Plan Premium</h1>
+        <div className="text-2xl font-extrabold text-yellow-400 mb-4">R$ 199 / mois</div>
         <p className="mb-6 text-lg text-gray-300">
           Profitez de tous les avantages exclusifs&nbsp;:
         </p>
