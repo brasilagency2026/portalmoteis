@@ -215,25 +215,6 @@ export default function OwnerDashboard() {
               {/* Action Buttons (supprimées avec stats) */}
             </div>
 
-            {/* Stats Section */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-gray-900 border border-red-500/30 rounded-lg p-6 text-center">
-                <p className="text-gray-400 text-sm mb-2">Visualizações</p>
-                <p className="text-4xl font-bold neon-green-text">1,234</p>
-                <p className="text-gray-500 text-xs mt-2">Este mês</p>
-              </div>
-              <div className="bg-gray-900 border border-red-500/30 rounded-lg p-6 text-center">
-                <p className="text-gray-400 text-sm mb-2">Cliques em WhatsApp</p>
-                <p className="text-4xl font-bold neon-green-text">87</p>
-                <p className="text-gray-500 text-xs mt-2">Este mês</p>
-              </div>
-              <div className="bg-gray-900 border border-red-500/30 rounded-lg p-6 text-center">
-                <p className="text-gray-400 text-sm mb-2">Taxa de Conversão</p>
-                <p className="text-4xl font-bold neon-green-text">7,1%</p>
-                <p className="text-gray-500 text-xs mt-2">Estimado</p>
-              </div>
-            </div>
-
             {/* Help Section */}
             <div className="bg-gray-900 border border-yellow-600/30 rounded-lg p-6">
               <h3 className="text-lg font-bold text-white mb-3">💡 Dicas para aumentar visibilidade</h3>
