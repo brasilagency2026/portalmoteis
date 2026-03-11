@@ -212,61 +212,7 @@ export default function OwnerDashboard() {
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div className="bg-gray-800 rounded p-4">
-                  <p className="text-gray-400 text-sm">ID do Motel</p>
-                  <p className="text-white font-mono text-xs mt-1">{motel.id}</p>
-                </div>
-                <div className="bg-gray-800 rounded p-4">
-                  <p className="text-gray-400 text-sm">Plano Ativo</p>
-                  <p className="text-white font-semibold mt-1">{motel.plan === 'premium' ? 'Premium' : 'Gratuito'}</p>
-                </div>
-                <div className="bg-gray-800 rounded p-4">
-                  <p className="text-gray-400 text-sm">Status</p>
-                  <p className="text-white font-semibold mt-1">{motel.status === 'active' ? 'Ativo' : motel.status === 'pending' ? 'Pendente' : 'Inativo'}</p>
-                </div>
-                <div className="bg-gray-800 rounded p-4">
-                  <p className="text-gray-400 text-sm">Cadastrado em</p>
-                  <p className="text-white font-semibold text-sm mt-1">{new Date(motel.created_at).toLocaleDateString('pt-BR')}</p>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex flex-wrap gap-3">
-                <Link
-                  href={buildMotelPath(motel.name, motel.id, motel.address)}
-                  className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-lg transition-all shadow-lg hover:shadow-blue-500/50 font-semibold"
-                  target="_blank"
-                >
-                  <Eye size={18} />
-                  Visualizar Anúncio
-                </Link>
-                <Link
-                  href={`/owner/edit-motel/${motel.id}`}
-                  className="group relative flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-lg transition-all shadow-lg hover:shadow-red-500/50 font-semibold overflow-hidden"
-                >
-                  <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-700"></span>
-                  <Edit2 size={18} className="relative z-10" />
-                  <span className="relative z-10">Editar Motel</span>
-                </Link>
-                {motel.plan === 'free' && (
-                  <Link
-                    href="/owner?upgrade=true"
-                    className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 rounded-lg transition-all shadow-lg hover:shadow-purple-500/50 font-semibold"
-                  >
-                    <Plus size={18} />
-                    Upgrade para Premium
-                  </Link>
-                )}
-                {/* {motel.plan === 'premium' && (
-                  <Link
-                    href="/owner/statistics"
-                    className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 rounded-lg transition-all shadow-lg hover:shadow-yellow-500/50 font-semibold text-black"
-                  >
-                    <TrendingUp size={18} />
-                    Estatísticas Avançadas
-                  </Link>
-                )} */}
-              </div>
+              {/* Action Buttons (supprimées avec stats) */}
             </div>
 
             {/* Stats Section */}
