@@ -99,7 +99,7 @@ export default function EditMotelPage() {
 
         const { data: motel, error: motelError } = await supabase
           .from('motels')
-          .select('name, state, city, address, phone, whatsapp, operating_hours, description, website, instagram, facebook, owner_id, photos')
+          .select('name, state, city, address, phone, whatsapp, operating_hours, description, website, instagram, facebook, owner_id, photos, plan')
           .eq('id', motelId)
           .eq('owner_id', user.id)
           .single()
