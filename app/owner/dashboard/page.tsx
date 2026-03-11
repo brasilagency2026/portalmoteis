@@ -186,3 +186,5 @@ export default function OwnerDashboard() {
         )}
       </section>
     </main>
+  );
+}
