@@ -43,7 +43,7 @@ const apps = [
     icon: Heart,
     color: 'bg-blue-600',
     status: 'Ativo',
-    link: '/classificados'
+    link: 'https://classificados.bdsmbrazil.com.br'
   }
 ]
 
