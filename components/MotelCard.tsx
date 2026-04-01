@@ -11,12 +11,14 @@ export default function MotelCard({ motel, distance, isPremiumClose, hasUserLoca
   return (
     <div className="bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden shadow-lg border border-zinc-100 dark:border-zinc-800 hover:shadow-xl transition-all duration-300 group flex flex-col h-full">
       <Link href={motelPath} className="relative h-56 w-full block overflow-hidden">
-        <Image 
-          src={motel.photos[0] || 'https://picsum.photos/800/600'} 
-          alt={motel.name} 
-          fill 
-          className="object-cover group-hover:scale-105 transition-transform duration-500"
-        />
+<Image 
+  src={motel.photos[0] || 'https://picsum.photos/800/600'} 
+  alt={motel.name} 
+  fill
+  sizes="(max-width: 768px) 100vw, 33vw"
+  quality={60}
+  className="object-cover group-hover:scale-105 transition-transform duration-500"
+/>
         {isPremiumClose && (
           <div className="absolute top-3 right-3 bg-gradient-to-r from-yellow-500 via-yellow-600 to-orange-600 text-black text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-lg z-10">
             <Star size={12} fill="currentColor" />
