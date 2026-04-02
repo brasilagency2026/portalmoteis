@@ -1,7 +1,7 @@
 'use client'
+  const pageSize = 10
 
-import { useMemo, useState, useEffect } from 'react'
-import MotelCard from '@/components/MotelCard'
+  const filteredMotels = useMemo(() => {
 import MotelMapDynamic from '@/components/MotelMapDynamic'
 import { Motel } from '@/types'
 import { MapPin } from 'lucide-react'
@@ -53,8 +53,8 @@ const ufToStateName: Record<string, string> = {
   SC: 'santa catarina',
   SP: 'sao paulo',
   SE: 'sergipe',
-  TO: 'tocantins',
-}
+
+  const totalPages = Math.ceil(filteredMotels.length / pageSize)
 
 // Calcul de distance Haversine
 const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
