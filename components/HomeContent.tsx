@@ -1,73 +1,71 @@
-  "use client";
-  import { useMemo, useState, useEffect } from 'react';
-  import MotelCard from '@/components/MotelCard';
-  import MotelMapDynamic from '@/components/MotelMapDynamic';
-  import { Motel } from '@/types';
-  import { MapPin } from 'lucide-react';
 
-  type Props = {
-    motels: Motel[]
-  }
+"use client";
+import { useMemo, useState, useEffect } from 'react';
+import MotelCard from '@/components/MotelCard';
+import MotelMapDynamic from '@/components/MotelMapDynamic';
+import { Motel } from '@/types';
+import { MapPin } from 'lucide-react';
 
-  type UserLocation = {
-    lat: number
-    lng: number
-  }
+type Props = {
+  motels: Motel[]
+}
 
-  type MotelWithCoords = Motel & {
-    lat: number
-    lng: number
-  }
+type UserLocation = {
+  lat: number
+  lng: number
+}
 
-  const brazilStates = [
-    'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO',
-    'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI',
-    'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO',
-  ]
+type MotelWithCoords = Motel & {
+  lat: number
+  lng: number
+}
 
-  const ufToStateName: Record<string, string> = {
-    AC: 'acre', AL: 'alagoas', AP: 'amapa', AM: 'amazonas', BA: 'bahia', CE: 'ceara', DF: 'distrito federal', ES: 'espirito santo', GO: 'goias', MA: 'maranhao', MT: 'mato grosso', MS: 'mato grosso do sul', MG: 'minas gerais', PA: 'para', PB: 'paraiba', PR: 'parana', PE: 'pernambuco', PI: 'piaui', RJ: 'rio de janeiro', RN: 'rio grande do norte', RS: 'rio grande do sul', RO: 'rondonia', RR: 'roraima', SC: 'santa catarina', SP: 'sao paulo', SE: 'sergipe',
-  }
+const brazilStates = [
+  'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO',
+  'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI',
+  'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO',
+]
 
-  // ...autres fonctions utilitaires (calculateDistance, hasCoordinates, normalizeText, escapeRegex, hasUfToken)
+const ufToStateName: Record<string, string> = {
+  AC: 'acre', AL: 'alagoas', AP: 'amapa', AM: 'amazonas', BA: 'bahia', CE: 'ceara', DF: 'distrito federal', ES: 'espirito santo', GO: 'goias', MA: 'maranhao', MT: 'mato grosso', MS: 'mato grosso do sul', MG: 'minas gerais', PA: 'para', PB: 'paraiba', PR: 'parana', PE: 'pernambuco', PI: 'piaui', RJ: 'rio de janeiro', RN: 'rio grande do norte', RS: 'rio grande do sul', RO: 'rondonia', RR: 'roraima', SC: 'santa catarina', SP: 'sao paulo', SE: 'sergipe',
+}
 
-  export default function HomeContent({ motels }: Props) {
-    const [selectedState, setSelectedState] = useState<string>('')
-    const [query, setQuery] = useState<string>('')
-    const [userLocation, setUserLocation] = useState<UserLocation | null>(null)
-    const [page, setPage] = useState(1)
-    const pageSize = 10;
+// ...autres fonctions utilitaires (calculateDistance, hasCoordinates, normalizeText, escapeRegex, hasUfToken)
 
-    // Demander la géolocalisation manuellement
-    const handleRequestGeolocation = () => {
-      if (!navigator.geolocation) {
-        alert('Géolocalisation non supportée par votre navigateur')
-        return
-      }
+export default function HomeContent({ motels }: Props) {
+  const [selectedState, setSelectedState] = useState<string>('')
+  const [query, setQuery] = useState<string>('')
+  const [userLocation, setUserLocation] = useState<UserLocation | null>(null)
+  const [page, setPage] = useState(1)
+  const pageSize = 10;
 
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const lat = position.coords.latitude
-          const lng = position.coords.longitude
-          console.log('✅ Geolocalização obtida:', { lat, lng })
-          setUserLocation({ lat, lng })
-          alert(`✅ Localização ativa! Latitude: ${lat.toFixed(4)}, Longitude: ${lng.toFixed(4)}`)
-        },
-        (error) => {
-          console.error('❌ Erro de geolocalização:', error)
-          if (error.code === 1) {
-            alert('Acesso à geolocalização negado. Habilite nas configurações do seu navegador.')
-          } else if (error.code === 2) {
-            alert('Localização indisponível. Tente novamente.')
-          } else {
-            alert('Erro ao obter localização: ' + error.message)
-          }
-        },
-        { timeout: 10000, enableHighAccuracy: true }
-      )
+  // Demander la géolocalisation manuellement
+  const handleRequestGeolocation = () => {
+    if (!navigator.geolocation) {
+      alert('Géolocalisation non supportée par votre navigateur')
+      return
     }
-
-    // ...rest of the component code
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude
+        const lng = position.coords.longitude
+        console.log('✅ Geolocalização obtida:', { lat, lng })
+        setUserLocation({ lat, lng })
+        alert(`✅ Localização ativa! Latitude: ${lat.toFixed(4)}, Longitude: ${lng.toFixed(4)}`)
+      },
+      (error) => {
+        console.error('❌ Erro de geolocalização:', error)
+        if (error.code === 1) {
+          alert('Acesso à geolocalização negado. Habilite nas configurações do seu navegador.')
+        } else if (error.code === 2) {
+          alert('Localização indisponível. Tente novamente.')
+        } else {
+          alert('Erro ao obter localização: ' + error.message)
+        }
+      },
+      { timeout: 10000, enableHighAccuracy: true }
+    )
+  }
 
   // Demander la géolocalisation manuellement
   const handleRequestGeolocation = () => {
