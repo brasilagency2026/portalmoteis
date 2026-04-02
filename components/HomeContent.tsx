@@ -321,7 +321,7 @@ export default function HomeContent({ motels }: Props) {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredMotels.map((motel) => {
+              {filteredMotels.slice(0, 10).map((motel) => {
                 const hasCoords = hasCoordinates(motel)
                 const distance = userLocation && hasCoords
                   ? calculateDistance(userLocation.lat, userLocation.lng, motel.lat, motel.lng) 
