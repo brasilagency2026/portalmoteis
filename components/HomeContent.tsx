@@ -51,8 +51,9 @@ const ufToStateName: Record<string, string> = {
   RO: 'rondonia',
   RR: 'roraima',
   SC: 'santa catarina',
-  SP: 'sao paulo',
-  SE: 'sergipe',
+	SP: 'sao paulo',
+	SE: 'sergipe',
+}
 
   const totalPages = Math.ceil(filteredMotels.length / pageSize)
 
