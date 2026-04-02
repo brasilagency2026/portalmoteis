@@ -353,25 +353,50 @@ export default function HomeContent({ motels }: Props) {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex justify-center items-center gap-2 mt-8">
+              <div className="flex justify-center items-center gap-1 sm:gap-2 mt-8 flex-wrap">
                 <button
-                  className="px-3 py-1 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-100 font-bold disabled:opacity-50"
+                  className="px-3 py-2 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-100 font-bold disabled:opacity-50 text-sm sm:text-base"
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
                 >
                   ←
                 </button>
-                {Array.from({ length: totalPages }, (_, i) => (
-                  <button
-                    key={i}
-                    className={`px-3 py-1 rounded font-bold ${page === i + 1 ? 'bg-red-600 text-white' : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-100'}`}
-                    onClick={() => setPage(i + 1)}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
+                {/* Mobile: afficher moins de pages */}
+                {Array.from({ length: totalPages }, (_, i) => {
+                  const pageNum = i + 1
+                  // Sur mobile (sm:hidden), afficher seulement: 1, page actuelle, dernière
+                  // Sur desktop, afficher plus de pages
+                  const isMobileVisible = pageNum === 1 || pageNum === page || pageNum === totalPages || (page === 1 && pageNum <= 3) || (page === totalPages && pageNum >= totalPages - 2)
+                  const isDesktopVisible = Math.abs(pageNum - page) <= 2 || pageNum === 1 || pageNum === totalPages
+                  
+                  // Afficher "..." pour les pages cachées
+                  if (!isDesktopVisible) {
+                    // Afficher "..." seulement une fois entre les sections
+                    if (pageNum === 2 && page > 4) {
+                      return <span key={i} className="hidden sm:block px-2 text-zinc-500 dark:text-zinc-400">...</span>
+                    }
+                    if (pageNum === totalPages - 1 && page < totalPages - 3) {
+                      return <span key={i} className="hidden sm:block px-2 text-zinc-500 dark:text-zinc-400">...</span>
+                    }
+                    return null
+                  }
+                  
+                  return (
+                    <button
+                      key={i}
+                      className={`px-3 py-2 rounded font-bold text-sm sm:text-base min-w-[40px] ${
+                        page === pageNum 
+                          ? 'bg-red-600 text-white' 
+                          : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-100'
+                      } ${!isMobileVisible ? 'hidden sm:block' : ''}`}
+                      onClick={() => setPage(pageNum)}
+                    >
+                      {pageNum}
+                    </button>
+                  )
+                })}
                 <button
-                  className="px-3 py-1 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-100 font-bold disabled:opacity-50"
+                  className="px-3 py-2 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-100 font-bold disabled:opacity-50 text-sm sm:text-base"
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
                 >
