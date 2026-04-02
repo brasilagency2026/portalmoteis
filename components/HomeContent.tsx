@@ -1,3 +1,31 @@
+  // Demander la géolocalisation manuellement
+  const handleRequestGeolocation = () => {
+    if (!navigator.geolocation) {
+      alert('Géolocalisation non supportée par votre navigateur')
+      return
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude
+        const lng = position.coords.longitude
+        console.log('✅ Geolocalização obtida:', { lat, lng })
+        setUserLocation({ lat, lng })
+        alert(`✅ Localização ativa! Latitude: ${lat.toFixed(4)}, Longitude: ${lng.toFixed(4)}`)
+      },
+      (error) => {
+        console.error('❌ Erro de geolocalização:', error)
+        if (error.code === 1) {
+          alert('Acesso à geolocalização negado. Habilite nas configurações do seu navegador.')
+        } else if (error.code === 2) {
+          alert('Localização indisponível. Tente novamente.')
+        } else {
+          alert('Erro ao obter localização: ' + error.message)
+        }
+      },
+      { timeout: 10000, enableHighAccuracy: true }
+    )
+  }
 "use client";
 import { useMemo, useState, useEffect } from 'react';
 import MotelCard from '@/components/MotelCard';
