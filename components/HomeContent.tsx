@@ -28,11 +28,11 @@
   }
 
 'use client'
-import { useMemo, useState, useEffect } from 'react'
-import MotelCard from '@/components/MotelCard'
-import MotelMapDynamic from '@/components/MotelMapDynamic'
-import { Motel } from '@/types'
-import { MapPin } from 'lucide-react'
+import { useMemo, useState, useEffect } from 'react';
+import MotelCard from '@/components/MotelCard';
+import MotelMapDynamic from '@/components/MotelMapDynamic';
+import { Motel } from '@/types';
+import { MapPin } from 'lucide-react';
 
 type Props = {
   motels: Motel[]
