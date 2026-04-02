@@ -91,6 +91,7 @@ export default function HomeContent({ motels }: Props) {
   const [query, setQuery] = useState<string>('')
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null)
   const [page, setPage] = useState(1)
+
   const pageSize = 10
   const totalPages = Math.ceil(filteredMotels.length / pageSize)
 
