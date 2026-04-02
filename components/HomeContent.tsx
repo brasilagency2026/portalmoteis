@@ -55,60 +55,7 @@ const ufToStateName: Record<string, string> = {
 	SE: 'sergipe',
 }
 
-  const filteredMotels = useMemo(() => {
-    let results = motels.filter((motel) => {
-      const motelWithLocation = motel as Motel & { city?: string | null; state?: string | null }
-      const normalizedAddress = normalizeText(motel.address || '')
-      const normalizedCity = normalizeText(motelWithLocation.city || '')
-      const normalizedState = normalizeText(motelWithLocation.state || '')
 
-      const stateScope = `${normalizedState} ${normalizedCity} ${normalizedAddress}`
-      const normalizedSelectedState = normalizeText(selectedState)
-      const selectedStateName = ufToStateName[selectedState] || ''
-
-      const matchesState = normalizedSelectedState
-        ? hasUfToken(stateScope, normalizedSelectedState) || stateScope.includes(selectedStateName)
-        : true
-
-      const normalizedQuery = normalizeText(query)
-      const searchScope = `${normalizeText(motel.name || '')} ${normalizedAddress} ${normalizedCity} ${normalizedState}`
-      const queryTokens = normalizedQuery ? normalizedQuery.split(' ').filter(Boolean) : []
-      const matchesQuery = queryTokens.length > 0
-        ? queryTokens.every((token) => searchScope.includes(token))
-        : true
-
-      return matchesState && matchesQuery
-    })
-
-    // Si on a la position de l'utilisateur, trier par distance avec priorité aux premium 20km
-    if (userLocation) {
-      // Séparer les motels avec et sans coordonnées
-      const withCoords = results.filter(hasCoordinates)
-      const withoutCoords = results.filter((m) => !hasCoordinates(m))
-
-      withCoords.sort((a, b) => {
-        const distanceA = calculateDistance(userLocation.lat, userLocation.lng, a.lat, a.lng)
-        const distanceB = calculateDistance(userLocation.lat, userLocation.lng, b.lat, b.lng)
-
-        // Prioriser les motels premium dans un rayon de 20km
-        const aPremiumClose = a.plan === 'premium' && distanceA <= 20
-        const bPremiumClose = b.plan === 'premium' && distanceB <= 20
-
-        if (aPremiumClose && !bPremiumClose) return -1
-        if (!aPremiumClose && bPremiumClose) return 1
-
-        // Ensuite trier par distance
-        return distanceA - distanceB
-      })
-
-      // Mettre les motels sans coordonnées à la fin
-      results = [...withCoords, ...withoutCoords]
-    }
-
-    return results
-  }, [motels, selectedState, query, userLocation])
-
-  const totalPages = Math.ceil(filteredMotels.length / pageSize)
 
 // Calcul de distance Haversine
 const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
