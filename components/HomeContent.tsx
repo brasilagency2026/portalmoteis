@@ -90,6 +90,9 @@ export default function HomeContent({ motels }: Props) {
   const [selectedState, setSelectedState] = useState<string>('')
   const [query, setQuery] = useState<string>('')
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null)
+  const [page, setPage] = useState(1)
+  const pageSize = 10
+  const totalPages = Math.ceil(filteredMotels.length / pageSize)
 
   // Récupérer la géolocalisation
   useEffect(() => {
@@ -321,7 +324,35 @@ export default function HomeContent({ motels }: Props) {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredMotels.slice(0, 10).map((motel) => {
+              {filteredMotels.slice((page - 1) * pageSize, page * pageSize).map((motel) => {
+                            {/* Pagination */}
+                            {totalPages > 1 && (
+                              <div className="flex justify-center items-center gap-2 mt-8">
+                                <button
+                                  className="px-3 py-1 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-100 font-bold disabled:opacity-50"
+                                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                                  disabled={page === 1}
+                                >
+                                  ←
+                                </button>
+                                {Array.from({ length: totalPages }, (_, i) => (
+                                  <button
+                                    key={i}
+                                    className={`px-3 py-1 rounded font-bold ${page === i + 1 ? 'bg-red-600 text-white' : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-100'}`}
+                                    onClick={() => setPage(i + 1)}
+                                  >
+                                    {i + 1}
+                                  </button>
+                                ))}
+                                <button
+                                  className="px-3 py-1 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-100 font-bold disabled:opacity-50"
+                                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                                  disabled={page === totalPages}
+                                >
+                                  →
+                                </button>
+                              </div>
+                            )}
                 const hasCoords = hasCoordinates(motel)
                 const distance = userLocation && hasCoords
                   ? calculateDistance(userLocation.lat, userLocation.lng, motel.lat, motel.lng) 
