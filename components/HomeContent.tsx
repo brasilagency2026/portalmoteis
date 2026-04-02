@@ -1,100 +1,3 @@
-
-"use client";
-import { useMemo, useState, useEffect } from 'react';
-import MotelCard from '@/components/MotelCard';
-import MotelMapDynamic from '@/components/MotelMapDynamic';
-import { Motel } from '@/types';
-import { MapPin } from 'lucide-react';
-
-type Props = {
-  motels: Motel[]
-}
-
-type UserLocation = {
-  lat: number
-  lng: number
-}
-
-type MotelWithCoords = Motel & {
-  lat: number
-  lng: number
-}
-
-const brazilStates = [
-  'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO',
-  'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI',
-  'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO',
-]
-
-const ufToStateName: Record<string, string> = {
-  AC: 'acre', AL: 'alagoas', AP: 'amapa', AM: 'amazonas', BA: 'bahia', CE: 'ceara', DF: 'distrito federal', ES: 'espirito santo', GO: 'goias', MA: 'maranhao', MT: 'mato grosso', MS: 'mato grosso do sul', MG: 'minas gerais', PA: 'para', PB: 'paraiba', PR: 'parana', PE: 'pernambuco', PI: 'piaui', RJ: 'rio de janeiro', RN: 'rio grande do norte', RS: 'rio grande do sul', RO: 'rondonia', RR: 'roraima', SC: 'santa catarina', SP: 'sao paulo', SE: 'sergipe',
-}
-
-// ...autres fonctions utilitaires (calculateDistance, hasCoordinates, normalizeText, escapeRegex, hasUfToken)
-
-export default function HomeContent({ motels }: Props) {
-  const [selectedState, setSelectedState] = useState<string>('')
-  const [query, setQuery] = useState<string>('')
-  const [userLocation, setUserLocation] = useState<UserLocation | null>(null)
-  const [page, setPage] = useState(1)
-  const pageSize = 10;
-
-  // Demander la géolocalisation manuellement
-  const handleRequestGeolocation = () => {
-    if (!navigator.geolocation) {
-      alert('Géolocalisation non supportée par votre navigateur')
-      return
-    }
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const lat = position.coords.latitude
-        const lng = position.coords.longitude
-        console.log('✅ Geolocalização obtida:', { lat, lng })
-        setUserLocation({ lat, lng })
-        alert(`✅ Localização ativa! Latitude: ${lat.toFixed(4)}, Longitude: ${lng.toFixed(4)}`)
-      },
-      (error) => {
-        console.error('❌ Erro de geolocalização:', error)
-        if (error.code === 1) {
-          alert('Acesso à geolocalização negado. Habilite nas configurações do seu navegador.')
-        } else if (error.code === 2) {
-          alert('Localização indisponível. Tente novamente.')
-        } else {
-          alert('Erro ao obter localização: ' + error.message)
-        }
-      },
-      { timeout: 10000, enableHighAccuracy: true }
-    )
-  }
-
-  // Demander la géolocalisation manuellement
-  const handleRequestGeolocation = () => {
-    if (!navigator.geolocation) {
-      alert('Géolocalisation non supportée par votre navigateur')
-      return
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const lat = position.coords.latitude
-        const lng = position.coords.longitude
-        console.log('✅ Geolocalização obtida:', { lat, lng })
-        setUserLocation({ lat, lng })
-        alert(`✅ Localização ativa! Latitude: ${lat.toFixed(4)}, Longitude: ${lng.toFixed(4)}`)
-      },
-      (error) => {
-        console.error('❌ Erro de geolocalização:', error)
-        if (error.code === 1) {
-          alert('Acesso à geolocalização negado. Habilite nas configurações do seu navegador.')
-        } else if (error.code === 2) {
-          alert('Localização indisponível. Tente novamente.')
-        } else {
-          alert('Erro ao obter localização: ' + error.message)
-        }
-      },
-      { timeout: 10000, enableHighAccuracy: true }
-    )
-  }
 "use client";
 import { useMemo, useState, useEffect } from 'react';
 import MotelCard from '@/components/MotelCard';
@@ -147,11 +50,9 @@ const ufToStateName: Record<string, string> = {
   RO: 'rondonia',
   RR: 'roraima',
   SC: 'santa catarina',
-	SP: 'sao paulo',
-	SE: 'sergipe',
+  SP: 'sao paulo',
+  SE: 'sergipe',
 }
-
-
 
 // Calcul de distance Haversine
 const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
@@ -183,13 +84,40 @@ const hasUfToken = (text: string, uf: string): boolean => {
   return pattern.test(text)
 }
 
-
 export default function HomeContent({ motels }: Props) {
   const [selectedState, setSelectedState] = useState<string>('')
   const [query, setQuery] = useState<string>('')
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null)
   const [page, setPage] = useState(1)
   const pageSize = 10;
+
+  // Demander la géolocalisation manuellement
+  const handleRequestGeolocation = () => {
+    if (!navigator.geolocation) {
+      alert('Géolocalisation non supportée par votre navigateur')
+      return
+    }
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude
+        const lng = position.coords.longitude
+        console.log('✅ Geolocalização obtida:', { lat, lng })
+        setUserLocation({ lat, lng })
+        alert(`✅ Localização ativa! Latitude: ${lat.toFixed(4)}, Longitude: ${lng.toFixed(4)}`)
+      },
+      (error) => {
+        console.error('❌ Erro de geolocalização:', error)
+        if (error.code === 1) {
+          alert('Acesso à geolocalização negado. Habilite nas configurações do seu navegador.')
+        } else if (error.code === 2) {
+          alert('Localização indisponível. Tente novamente.')
+        } else {
+          alert('Erro ao obter localização: ' + error.message)
+        }
+      },
+      { timeout: 10000, enableHighAccuracy: true }
+    )
+  }
 
   const filteredMotels = useMemo(() => {
     let results = motels.filter((motel) => {
@@ -263,9 +191,6 @@ export default function HomeContent({ motels }: Props) {
       )
     }
   }, [])
-
-  // Demander la géolocalisation manuellement
-
 
   const searchSuggestions = useMemo(() => {
     const values = new Set<string>()
@@ -398,37 +323,9 @@ export default function HomeContent({ motels }: Props) {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredMotels.slice((page - 1) * pageSize, page * pageSize).map((motel) => {
-                            {/* Pagination */}
-                            {totalPages > 1 && (
-                              <div className="flex justify-center items-center gap-2 mt-8">
-                                <button
-                                  className="px-3 py-1 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-100 font-bold disabled:opacity-50"
-                                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                                  disabled={page === 1}
-                                >
-                                  ←
-                                </button>
-                                {Array.from({ length: totalPages }, (_, i) => (
-                                  <button
-                                    key={i}
-                                    className={`px-3 py-1 rounded font-bold ${page === i + 1 ? 'bg-red-600 text-white' : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-100'}`}
-                                    onClick={() => setPage(i + 1)}
-                                  >
-                                    {i + 1}
-                                  </button>
-                                ))}
-                                <button
-                                  className="px-3 py-1 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-100 font-bold disabled:opacity-50"
-                                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                                  disabled={page === totalPages}
-                                >
-                                  →
-                                </button>
-                              </div>
-                            )}
                 const hasCoords = hasCoordinates(motel)
                 const distance = userLocation && hasCoords
-                  ? calculateDistance(userLocation.lat, userLocation.lng, motel.lat, motel.lng) 
+                  ? calculateDistance(userLocation.lat, userLocation.lng, motel.lat, motel.lng)
                   : null
                 const isPremiumClose = motel.plan === 'premium' && distance !== null && distance <= 20
 
@@ -438,9 +335,9 @@ export default function HomeContent({ motels }: Props) {
                 }
 
                 return (
-                  <MotelCard 
-                    key={motel.id} 
-                    motel={motel} 
+                  <MotelCard
+                    key={motel.id}
+                    motel={motel}
                     distance={distance}
                     isPremiumClose={isPremiumClose}
                     hasUserLocation={Boolean(userLocation)}
@@ -453,6 +350,35 @@ export default function HomeContent({ motels }: Props) {
                 </div>
               )}
             </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2 mt-8">
+                <button
+                  className="px-3 py-1 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-100 font-bold disabled:opacity-50"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                >
+                  ←
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <button
+                    key={i}
+                    className={`px-3 py-1 rounded font-bold ${page === i + 1 ? 'bg-red-600 text-white' : 'bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-100'}`}
+                    onClick={() => setPage(i + 1)}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+                <button
+                  className="px-3 py-1 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-100 font-bold disabled:opacity-50"
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                >
+                  →
+                </button>
+              </div>
+            )}
           </section>
 
           <section className="mt-4 md:mt-8">
@@ -473,9 +399,9 @@ export default function HomeContent({ motels }: Props) {
             <div className="max-w-md">
               <h3 className="text-lg font-bold text-white mb-2">BDSMBRAZIL Motéis</h3>
               <p className="text-sm text-zinc-400">
-                O portal especializado em motéis com suites temáticas e ambientes BDSM no Brasil. 
-                Encontre estabelecimentos com discreção, qualidade e serviços diferenciados. 
-                Busque por estado, cidade ou endereço e descubra as melhores opções para 
+                O portal especializado em motéis com suites temáticas e ambientes BDSM no Brasil.
+                Encontre estabelecimentos com discreção, qualidade e serviços diferenciados.
+                Busque por estado, cidade ou endereço e descubra as melhores opções para
                 experiências memoráveis e seguras.
               </p>
             </div>
