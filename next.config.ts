@@ -28,7 +28,20 @@ const nextConfig: NextConfig = {
         hostname: 'npfrnhwwlbjwfcxewysq.supabase.co',
         port: '',
         pathname: '/**',
-      }
+      },
+      // Cloudflare R2 - nouveau stockage images
+      {
+        protocol: 'https',
+        hostname: 'pub-*.r2.dev',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.r2.cloudflarestorage.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
   output: 'standalone',
