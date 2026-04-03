@@ -2,15 +2,19 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Maximize2, ImageIcon } from 'lucide-react'
 
 interface ImageCarouselProps {
     images: string[]
     alt: string
 }
 
+// Image de fallback par défaut
+const FALLBACK_IMAGE = 'https://picsum.photos/seed/motel-default/1200/800'
+
 export default function ImageCarousel({ images, alt }: ImageCarouselProps) {
     const [currentIndex, setCurrentIndex] = useState(0)
+    const [failedImages, setFailedImages] = useState<Set<number>>(new Set())
 
     const goToNext = () => {
         setCurrentIndex((prev) => (prev + 1) % images.length)
@@ -21,7 +25,17 @@ export default function ImageCarousel({ images, alt }: ImageCarouselProps) {
     }
 
     const openImage = () => {
-        window.open(images[currentIndex], '_blank')
+        const imageToOpen = failedImages.has(currentIndex) ? FALLBACK_IMAGE : images[currentIndex]
+        window.open(imageToOpen, '_blank')
+    }
+
+    const handleImageError = (index: number) => {
+        console.warn(`⚠️ Erreur chargement image ${index + 1}: ${images[index]}`)
+        setFailedImages(prev => new Set(prev).add(index))
+    }
+
+    const getImageSrc = (index: number) => {
+        return failedImages.has(index) ? FALLBACK_IMAGE : images[index]
     }
 
     if (!images || images.length === 0) return null
@@ -31,11 +45,12 @@ export default function ImageCarousel({ images, alt }: ImageCarouselProps) {
             {/* Main Image Container */}
             <div className="relative h-[400px] md:h-[600px] w-full rounded-2xl overflow-hidden shadow-2xl bg-zinc-100">
                 <Image
-                    src={images[currentIndex]}
+                    src={getImageSrc(currentIndex)}
                     alt={`${alt} - Foto ${currentIndex + 1}`}
                     fill
                     className="object-cover transition-all duration-500 ease-in-out"
                     priority
+                    onError={() => handleImageError(currentIndex)}
                 />
 
                 {/* Overlay with image counter and zoom indicator */}
@@ -84,10 +99,11 @@ export default function ImageCarousel({ images, alt }: ImageCarouselProps) {
                                 }`}
                         >
                             <Image
-                                src={img}
+                                src={getImageSrc(i)}
                                 alt={`${alt} thumbnail ${i + 1}`}
                                 fill
                                 className="object-cover"
+                                onError={() => handleImageError(i)}
                             />
                         </button>
                     ))}
