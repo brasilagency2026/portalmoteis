@@ -10,7 +10,29 @@ interface ImageCarouselProps {
 }
 
 // Image de fallback par défaut
-const FALLBACK_IMAGE = 'https://picsum.photos/seed/motel-default/1200/800'
+const FALLBACK_IMAGE = 'https://placehold.co/1200x800/27272a/ffffff?text=Imagem+Indisponivel'
+
+// Convertir les URLs en URLs proxy API
+const getProxyImageUrl = (url: string) => {
+    if (!url) return FALLBACK_IMAGE
+    
+    // Déjà une URL proxy
+    if (url.startsWith('/api/images/')) return url
+    
+    // URL R2 -> proxy
+    if (url.includes('r2.cloudflarestorage.com')) {
+        const parts = url.split('.com/')
+        if (parts.length > 1) return `/api/images/${parts[1]}`
+    }
+    
+    // URL Supabase -> proxy
+    if (url.includes('supabase.co') && url.includes('motel-photos/')) {
+        const parts = url.split('motel-photos/')
+        if (parts.length > 1) return `/api/images/${parts[1]}`
+    }
+    
+    return url
+}
 
 export default function ImageCarousel({ images, alt }: ImageCarouselProps) {
     const [currentIndex, setCurrentIndex] = useState(0)
@@ -25,7 +47,7 @@ export default function ImageCarousel({ images, alt }: ImageCarouselProps) {
     }
 
     const openImage = () => {
-        const imageToOpen = failedImages.has(currentIndex) ? FALLBACK_IMAGE : images[currentIndex]
+        const imageToOpen = failedImages.has(currentIndex) ? FALLBACK_IMAGE : getProxyImageUrl(images[currentIndex])
         window.open(imageToOpen, '_blank')
     }
 
@@ -35,7 +57,8 @@ export default function ImageCarousel({ images, alt }: ImageCarouselProps) {
     }
 
     const getImageSrc = (index: number) => {
-        return failedImages.has(index) ? FALLBACK_IMAGE : images[index]
+        if (failedImages.has(index)) return FALLBACK_IMAGE
+        return getProxyImageUrl(images[index])
     }
 
     if (!images || images.length === 0) return null

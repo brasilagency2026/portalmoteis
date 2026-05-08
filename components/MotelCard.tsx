@@ -4,24 +4,51 @@ import { Motel } from '@/types'
 import { LocateFixed, MapPin, MessageCircle, Star } from 'lucide-react'
 import NavigationButton from '@/components/NavigationButton'
 import { buildMotelPath } from '@/lib/utils'
+import { useState } from 'react'
+
+const FALLBACK_IMAGE = 'https://placehold.co/600x400/27272a/ffffff?text=Imagem+Indisponivel'
+
+// Convertir les URLs en URLs proxy API
+const getProxyImageUrl = (url: string) => {
+    if (!url) return '/default.jpg'
+    
+    // Déjà une URL proxy
+    if (url.startsWith('/api/images/')) return url
+    
+    // URL R2 -> proxy
+    if (url.includes('r2.cloudflarestorage.com')) {
+        const parts = url.split('.com/')
+        if (parts.length > 1) return `/api/images/${parts[1]}`
+    }
+    
+    // URL Supabase -> proxy
+    if (url.includes('supabase.co') && url.includes('motel-photos/')) {
+        const parts = url.split('motel-photos/')
+        if (parts.length > 1) return `/api/images/${parts[1]}`
+    }
+    
+    return url
+}
 
 export default function MotelCard({ motel, distance, isPremiumClose, hasUserLocation }: { motel: Motel, distance?: number | null, isPremiumClose?: boolean, hasUserLocation?: boolean }) {
   const motelPath = buildMotelPath(motel.name, motel.id, motel.address)
+  const [imgSrc, setImgSrc] = useState(getProxyImageUrl(motel.photos[0]))
 
   return (
     <div className="bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden shadow-lg border border-zinc-100 dark:border-zinc-800 hover:shadow-xl transition-all duration-300 group flex flex-col h-full">
       <Link href={motelPath} className="relative h-56 w-full block overflow-hidden">
-      {/^https?:\/\//.test(motel.photos[0]) ? (
+      {/^https?:\/\//.test(imgSrc) ? (
         <img
-          src={decodeURIComponent(motel.photos[0])}
+          src={decodeURIComponent(imgSrc)}
           alt={motel.name}
           loading="lazy"
           style={{ width: '100%', height: '100%', objectFit: 'cover', background: '#e5e7eb' }}
           className="object-cover group-hover:scale-105 transition-transform duration-500 h-full w-full"
+          onError={() => setImgSrc(FALLBACK_IMAGE)}
         />
       ) : (
         <Image
-          src={motel.photos[0] || '/default.jpg'}
+          src={imgSrc}
           alt={motel.name}
           fill
           sizes="(max-width: 768px) 100vw, 33vw"
@@ -29,6 +56,7 @@ export default function MotelCard({ motel, distance, isPremiumClose, hasUserLoca
           className="object-cover group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
           style={{ background: '#e5e7eb' }}
+          onError={() => setImgSrc(FALLBACK_IMAGE)}
         />
       )}
         {isPremiumClose && (
