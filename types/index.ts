@@ -10,6 +10,9 @@ export type Motel = {
   address: string;
   phone: string;
   whatsapp: string;
+  website?: string;
+  instagram?: string;
+  facebook?: string;
   tripadvisor: string;
   hours: string;
   periods: {

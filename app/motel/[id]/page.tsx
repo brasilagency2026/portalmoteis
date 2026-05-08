@@ -15,7 +15,10 @@ import {
     Music,
     Thermometer,
     ArrowLeft,
-    CheckCircle2
+    CheckCircle2,
+    Instagram,
+    Facebook,
+    Globe
 } from 'lucide-react'
 import ImageCarousel from '@/components/ImageCarousel'
 import { Motel } from '@/types'
@@ -214,10 +217,46 @@ export default async function MotelDetailsPage({ params }: { params: Promise<{ i
                         )}
                     </div>
                     <h1 className="text-4xl md:text-6xl font-black text-zinc-900 dark:text-zinc-50 tracking-tighter">{motel.name}</h1>
-                    <p className="text-zinc-500 dark:text-zinc-400 flex items-center gap-2 text-sm md:text-base font-medium">
-                        <MapPin size={18} className="text-red-500 shrink-0" />
                         {motel.address}
                     </p>
+
+                    {(motel.website || motel.instagram || motel.facebook) && (
+                        <div className="flex gap-4 items-center">
+                            {motel.website && (
+                                <a
+                                    href={motel.website.startsWith('http') ? motel.website : `https://${motel.website}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="p-2 bg-white dark:bg-zinc-900 rounded-full border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-red-600 dark:hover:text-red-500 transition-all shadow-sm"
+                                    title="Website"
+                                >
+                                    <Globe size={20} />
+                                </a>
+                            )}
+                            {motel.instagram && (
+                                <a
+                                    href={motel.instagram.startsWith('http') ? motel.instagram : `https://instagram.com/${motel.instagram.replace('@', '')}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="p-2 bg-white dark:bg-zinc-900 rounded-full border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-pink-600 transition-all shadow-sm"
+                                    title="Instagram"
+                                >
+                                    <Instagram size={20} />
+                                </a>
+                            )}
+                            {motel.facebook && (
+                                <a
+                                    href={motel.facebook.startsWith('http') ? motel.facebook : `https://facebook.com/${motel.facebook}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="p-2 bg-white dark:bg-zinc-900 rounded-full border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-blue-600 transition-all shadow-sm"
+                                    title="Facebook"
+                                >
+                                    <Facebook size={20} />
+                                </a>
+                            )}
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -310,6 +349,43 @@ export default async function MotelDetailsPage({ params }: { params: Promise<{ i
                                         <Phone size={22} />
                                         Ligar Agora
                                     </a>
+
+                                    {motel.website && (
+                                        <a
+                                            href={motel.website.startsWith('http') ? motel.website : `https://${motel.website}`}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="flex items-center justify-center gap-3 w-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 font-bold py-4 rounded-2xl transition-all border border-zinc-200 dark:border-zinc-700"
+                                        >
+                                            <Globe size={22} />
+                                            Visitar Website
+                                        </a>
+                                    )}
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        {motel.instagram && (
+                                            <a
+                                                href={motel.instagram.startsWith('http') ? motel.instagram : `https://instagram.com/${motel.instagram.replace('@', '')}`}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className={`flex items-center justify-center gap-3 w-full bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-500 hover:opacity-90 text-white font-bold py-3 rounded-2xl transition-all ${!motel.facebook ? 'col-span-2' : ''}`}
+                                            >
+                                                <Instagram size={20} />
+                                                Instagram
+                                            </a>
+                                        )}
+                                        {motel.facebook && (
+                                            <a
+                                                href={motel.facebook.startsWith('http') ? motel.facebook : `https://facebook.com/${motel.facebook}`}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className={`flex items-center justify-center gap-3 w-full bg-[#1877F2] hover:bg-[#166fe5] text-white font-bold py-3 rounded-2xl transition-all ${!motel.instagram ? 'col-span-2' : ''}`}
+                                            >
+                                                <Facebook size={20} />
+                                                Facebook
+                                            </a>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
 
@@ -327,7 +403,18 @@ export default async function MotelDetailsPage({ params }: { params: Promise<{ i
             </div>
 
             {/* Mobile Sticky Bar */}
-            <div className="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-zinc-950/90 backdrop-blur-xl border-t border-zinc-200 dark:border-zinc-800 p-4 flex gap-3 lg:hidden z-[100]">
+            <div className="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-zinc-950/90 backdrop-blur-xl border-t border-zinc-200 dark:border-zinc-800 p-4 flex gap-2 lg:hidden z-[100]">
+                {motel.website && (
+                    <a
+                        href={motel.website.startsWith('http') ? motel.website : `https://${motel.website}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="w-14 h-14 bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-2xl flex items-center justify-center border border-zinc-200 dark:border-zinc-700 shrink-0"
+                        title="Visitar Website"
+                    >
+                        <Globe size={20} />
+                    </a>
+                )}
                 <a
                     href={`https://wa.me/${motel.whatsapp.replace(/\D/g, '')}`}
                     className="flex-1 bg-green-600 text-white font-black py-4 rounded-2xl text-center flex items-center justify-center gap-2 text-sm"
