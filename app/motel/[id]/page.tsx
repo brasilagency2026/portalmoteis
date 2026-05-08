@@ -217,6 +217,8 @@ export default async function MotelDetailsPage({ params }: { params: Promise<{ i
                         )}
                     </div>
                     <h1 className="text-4xl md:text-6xl font-black text-zinc-900 dark:text-zinc-50 tracking-tighter">{motel.name}</h1>
+                    <p className="text-zinc-500 dark:text-zinc-400 flex items-center gap-2 text-sm md:text-base font-medium">
+                        <MapPin size={18} className="text-red-500 shrink-0" />
                         {motel.address}
                     </p>
 
