@@ -7,6 +7,22 @@ export const metadata: Metadata = {
   title: 'Portal de Motéis BDSM no Brasil',
   description: 'Busque motéis BDSM por estado e endereço, veja localização no mapa e encontre opções premium e discretas.',
   alternates: { canonical: '/' },
+  openGraph: {
+    title: 'Portal de Motéis BDSM no Brasil',
+    description: 'Busque motéis BDSM por estado e endereço, veja localização no mapa e encontre opções premium e discretas.',
+    url: '/',
+    siteName: 'Portal de Motéis BDSM',
+    images: [
+      {
+        url: '/moteisbdsm.png',
+        width: 1200,
+        height: 630,
+        alt: 'Portal de Motéis BDSM no Brasil',
+      },
+    ],
+    locale: 'pt_BR',
+    type: 'website',
+  },
 }
 
 export default async function Page() {

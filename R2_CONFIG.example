@@ -21,5 +21,6 @@ R2_PUBLIC_URL=https://pub-votre-id.r2.dev
 # ===========================================
 # Configuration Supabase (source des images)
 # ===========================================
-SUPABASE_URL=https://npfrnhwwlbjwfcxewysq.supabase.co
-SUPABASE_ANON_KEY=votre_supabase_anon_key
+# Utilisez les mêmes noms que sur Vercel
+NEXT_PUBLIC_SUPABASE_URL=https://npfrnhwwlbjwfcxewysq.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=votre_supabase_anon_key

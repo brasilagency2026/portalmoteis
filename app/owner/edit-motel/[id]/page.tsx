@@ -219,22 +219,22 @@ export default function EditMotelPage() {
       if (newPhotos.length > 0) {
         for (let index = 0; index < newPhotos.length; index++) {
           const file = newPhotos[index]
-          const safeName = sanitizeFileName(file.name)
-          const fileName = `${user.id}/${Date.now()}-${index}-${safeName}`
+          const formDataUpload = new FormData()
+          formDataUpload.append('file', file)
+          formDataUpload.append('index', String(index))
 
-          const { error: uploadError } = await supabase.storage
-            .from('motel-photos')
-            .upload(fileName, file)
+          const uploadRes = await fetch('/api/upload-image', {
+            method: 'POST',
+            body: formDataUpload,
+          })
 
-          if (uploadError) {
-            throw new Error(`Erro ao enviar ${file.name}: ${uploadError.message}`)
+          if (!uploadRes.ok) {
+            const errData = await uploadRes.json()
+            throw new Error(`Erro ao enviar ${file.name}: ${errData.error || 'Erro desconhecido'}`)
           }
 
-          const { data: publicData } = supabase.storage
-            .from('motel-photos')
-            .getPublicUrl(fileName)
-
-          uploadedPhotoUrls.push(publicData.publicUrl)
+          const { url } = await uploadRes.json()
+          uploadedPhotoUrls.push(url)
         }
       }
 

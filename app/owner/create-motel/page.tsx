@@ -549,27 +549,28 @@ function CreateMotelContent() {
         }
       }
 
-      // Upload photos to Supabase Storage
+      // Upload photos to R2 via API
       const photoUrls: string[] = []
       if (photos.length > 0) {
         setUploading(true)
         for (let i = 0; i < photos.length; i++) {
           const file = photos[i]
-          const timestamp = Date.now()
-          const filename = `${user.id}/${timestamp}-${i}-${file.name}`
+          const formDataUpload = new FormData()
+          formDataUpload.append('file', file)
+          formDataUpload.append('index', String(i))
 
-          const { error: uploadError, data } = await supabase.storage
-            .from('motel-photos')
-            .upload(filename, file)
+          const uploadRes = await fetch('/api/upload-image', {
+            method: 'POST',
+            body: formDataUpload,
+          })
 
-          if (uploadError) throw uploadError
+          if (!uploadRes.ok) {
+            const errData = await uploadRes.json()
+            throw new Error(errData.error || 'Erro ao enviar foto')
+          }
 
-          // Get public URL
-          const { data: publicData } = supabase.storage
-            .from('motel-photos')
-            .getPublicUrl(filename)
-
-          photoUrls.push(publicData.publicUrl)
+          const { url } = await uploadRes.json()
+          photoUrls.push(url)
         }
         setUploading(false)
       }

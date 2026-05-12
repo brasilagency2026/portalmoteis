@@ -13,6 +13,29 @@ import { buildMotelPath } from '@/lib/utils'
 
 const hasCoordinates = (motel: Motel): motel is Motel & { lat: number; lng: number } => motel.lat !== null && motel.lng !== null
 
+// Convertir les URLs en URLs proxy API
+const getProxyImageUrl = (url: string) => {
+    if (!url) return '/api/placeholder/400/300'
+    
+    // Déjà une URL proxy
+    if (url.startsWith('/api/images/')) return url
+    
+    // URL R2 -> proxy
+    if (url.includes('r2.cloudflarestorage.com')) {
+        const urlObj = new URL(url)
+        const path = urlObj.pathname.slice(1)
+        return `/api/images/${path}`
+    }
+    
+    // URL Supabase -> proxy (extraire le chemin après motel-photos/)
+    if (url.includes('supabase.co') && url.includes('motel-photos/')) {
+        const match = url.match(/motel-photos\/(.+)$/)
+        if (match) return `/api/images/${match[1]}`
+    }
+    
+    return url
+}
+
 // Fix for default marker icon in Next.js
 const icon = L.icon({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
@@ -131,7 +154,7 @@ export default function MotelMap({ motels, userLocation }: { motels: Motel[], us
               <div className="w-48">
                 <div className="relative h-32 w-full rounded-t-lg overflow-hidden mb-2">
                   <Image 
-                    src={motel.photos[0] || 'https://picsum.photos/400/300'} 
+                    src={getProxyImageUrl(motel.photos[0])} 
                     alt={motel.name} 
                     fill 
                     className="object-cover"
