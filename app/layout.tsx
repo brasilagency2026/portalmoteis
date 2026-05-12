@@ -2,7 +2,10 @@ import type { Metadata } from 'next';
 import './globals.css'; // Global styles
 import ConditionalHeader from '@/components/ConditionalHeader';
 
-const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://moteis.bdsmbrazil.com.br'
+const appBaseUrl =
+  process.env.NEXT_PUBLIC_APP_URL && !process.env.NEXT_PUBLIC_APP_URL.includes('portalmoteis.vercel.app')
+    ? process.env.NEXT_PUBLIC_APP_URL
+    : 'https://moteis.bdsmbrazil.com.br'
 
 export const metadata: Metadata = {
   metadataBase: new URL(appBaseUrl),
