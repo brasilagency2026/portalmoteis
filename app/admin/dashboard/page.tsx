@@ -20,6 +20,8 @@ interface Motel {
   name: string
   city: string
   address?: string
+  whatsapp?: string | null
+  owner_id?: string | null
   status: 'active' | 'inactive' | 'pending'
   plan: 'free' | 'premium'
   created_at: string
@@ -397,6 +399,8 @@ export default function AdminDashboard() {
                   <tr className="bg-gray-800 border-b border-gray-700">
                     <th className="px-6 py-3 text-left font-semibold">Nome</th>
                     <th className="px-6 py-3 text-left font-semibold">Cidade</th>
+                    <th className="px-6 py-3 text-left font-semibold">Email</th>
+                    <th className="px-6 py-3 text-left font-semibold">WhatsApp</th>
                     <th className="px-6 py-3 text-left font-semibold">Plano</th>
                     <th className="px-6 py-3 text-left font-semibold">Status</th>
                     <th className="px-6 py-3 text-left font-semibold">Cadastrado em</th>
@@ -404,58 +408,79 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {motels.map(motel => (
-                    <tr key={motel.id} className="border-b border-gray-700 hover:bg-gray-800/50 transition">
-                      <td className="px-6 py-3">{motel.name}</td>
-                      <td className="px-6 py-3">{motel.city}</td>
-                      <td className="px-6 py-3">
-                        <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                          motel.plan === 'premium'
-                            ? 'bg-purple-900/30 text-purple-300'
-                            : 'bg-blue-900/30 text-blue-300'
-                        }`}>
-                          {motel.plan === 'premium' ? 'Premium' : 'Gratuito'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-3">
-                        <select
-                          value={motel.status}
-                          onChange={(e) => handleUpdateMotelStatus(motel.id, e.target.value)}
-                          className={`px-2 py-1 rounded text-xs font-semibold bg-transparent border ${
-                            motel.status === 'active'
-                              ? 'border-green-600 text-green-300'
-                              : motel.status === 'pending'
-                              ? 'border-yellow-600 text-yellow-300'
-                              : 'border-gray-600 text-gray-300'
-                          }`}
-                        >
-                          <option value="active">Ativo</option>
-                          <option value="pending">Pendente</option>
-                          <option value="inactive">Inativo</option>
-                        </select>
-                      </td>
-                      <td className="px-6 py-3 text-gray-400">{new Date(motel.created_at).toLocaleDateString('pt-BR')}</td>
-                      <td className="px-6 py-3 text-center">
-                        <div className="flex items-center justify-center gap-2">
-                          <Link
-                            href={buildMotelPath(motel.name, motel.id, motel.address)}
-                            target="_blank"
-                            className="text-blue-400 hover:text-blue-300 transition text-xs px-2 py-1 rounded border border-blue-600"
-                            title="Ver motel"
+                  {motels.map(motel => {
+                    const ownerEmail = users.find(user => user.id === motel.owner_id)?.email || '-'
+                    const whatsappDigits = motel.whatsapp?.replace(/\D/g, '') || ''
+                    const whatsappLink = whatsappDigits ? `https://wa.me/${whatsappDigits}` : ''
+
+                    return (
+                      <tr key={motel.id} className="border-b border-gray-700 hover:bg-gray-800/50 transition">
+                        <td className="px-6 py-3">{motel.name}</td>
+                        <td className="px-6 py-3">{motel.city}</td>
+                        <td className="px-6 py-3 break-words">{ownerEmail}</td>
+                        <td className="px-6 py-3">
+                          {whatsappLink ? (
+                            <a
+                              href={whatsappLink}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-green-300 hover:text-green-200 transition"
+                            >
+                              {motel.whatsapp}
+                            </a>
+                          ) : (
+                            '-'
+                          )}
+                        </td>
+                        <td className="px-6 py-3">
+                          <span className={`px-2 py-1 rounded text-xs font-semibold ${
+                            motel.plan === 'premium'
+                              ? 'bg-purple-900/30 text-purple-300'
+                              : 'bg-blue-900/30 text-blue-300'
+                          }`}>
+                            {motel.plan === 'premium' ? 'Premium' : 'Gratuito'}
+                          </span>
+                        </td>
+                        <td className="px-6 py-3">
+                          <select
+                            value={motel.status}
+                            onChange={(e) => handleUpdateMotelStatus(motel.id, e.target.value)}
+                            className={`px-2 py-1 rounded text-xs font-semibold bg-transparent border ${
+                              motel.status === 'active'
+                                ? 'border-green-600 text-green-300'
+                                : motel.status === 'pending'
+                                ? 'border-yellow-600 text-yellow-300'
+                                : 'border-gray-600 text-gray-300'
+                            }`}
                           >
-                            Ver
-                          </Link>
-                          <button
-                            onClick={() => handleDeleteMotel(motel.id)}
-                            className="text-red-400 hover:text-red-300 transition text-xs px-2 py-1 rounded border border-red-600"
-                            title="Deletar motel"
-                          >
-                            Deletar
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                            <option value="active">Ativo</option>
+                            <option value="pending">Pendente</option>
+                            <option value="inactive">Inativo</option>
+                          </select>
+                        </td>
+                        <td className="px-6 py-3 text-gray-400">{new Date(motel.created_at).toLocaleDateString('pt-BR')}</td>
+                        <td className="px-6 py-3 text-center">
+                          <div className="flex items-center justify-center gap-2">
+                            <Link
+                              href={buildMotelPath(motel.name, motel.id, motel.address)}
+                              target="_blank"
+                              className="text-blue-400 hover:text-blue-300 transition text-xs px-2 py-1 rounded border border-blue-600"
+                              title="Ver motel"
+                            >
+                              Ver
+                            </Link>
+                            <button
+                              onClick={() => handleDeleteMotel(motel.id)}
+                              className="text-red-400 hover:text-red-300 transition text-xs px-2 py-1 rounded border border-red-600"
+                              title="Deletar motel"
+                            >
+                              Deletar
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>
