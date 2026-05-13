@@ -152,7 +152,7 @@ function OwnerPageContent() {
 
             <ul className="space-y-3 mb-6 text-zinc-300">
               <li className="flex items-center gap-2"><Check size={16} className="text-green-400"/> Cadastro completo do motel</li>
-              <li className="flex items-center gap-2"><Check size={16} className="text-green-400"/> 1 photo</li>
+              <li className="flex items-center gap-2"><Check size={16} className="text-green-400"/> 1 foto</li>
               <li className="flex items-center gap-2"><Check size={16} className="text-green-400"/> Integração Google Maps</li>
               <li className="flex items-center gap-2"><Check size={16} className="text-green-400"/> Posição por distância</li>
             </ul>
