@@ -346,8 +346,8 @@ export default function EditMotelPage() {
                 <input name="phone" value={formData.phone} onChange={handleInputChange} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-red-500 transition" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">WhatsApp</label>
-                <input name="whatsapp" value={formData.whatsapp} onChange={handleInputChange} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-red-500 transition" />
+                <label className="block text-sm font-medium text-gray-300 mb-2">WhatsApp (plano premium)</label>
+                <input name="whatsapp" value={formData.whatsapp} onChange={handleInputChange} disabled={plan === 'free'} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-red-500 transition disabled:opacity-50 disabled:cursor-not-allowed" />
               </div>
             </div>
 
@@ -424,16 +424,16 @@ export default function EditMotelPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Website</label>
-                <input name="website" value={formData.website} onChange={handleInputChange} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-red-500 transition" />
+                <label className="block text-sm font-medium text-gray-300 mb-2">Website (plano premium)</label>
+                <input name="website" value={formData.website} onChange={handleInputChange} disabled={plan === 'free'} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-red-500 transition disabled:opacity-50 disabled:cursor-not-allowed" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Instagram</label>
-                <input name="instagram" value={formData.instagram} onChange={handleInputChange} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-red-500 transition" />
+                <label className="block text-sm font-medium text-gray-300 mb-2">Instagram (plano premium)</label>
+                <input name="instagram" value={formData.instagram} onChange={handleInputChange} disabled={plan === 'free'} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-red-500 transition disabled:opacity-50 disabled:cursor-not-allowed" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Facebook</label>
-                <input name="facebook" value={formData.facebook} onChange={handleInputChange} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-red-500 transition" />
+                <label className="block text-sm font-medium text-gray-300 mb-2">Facebook (plano premium)</label>
+                <input name="facebook" value={formData.facebook} onChange={handleInputChange} disabled={plan === 'free'} className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-red-500 transition disabled:opacity-50 disabled:cursor-not-allowed" />
               </div>
             </div>
 
