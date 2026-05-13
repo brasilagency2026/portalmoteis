@@ -831,7 +831,7 @@ function CreateMotelContent() {
 
             {/* Redes Sociais e Website */}
             <div className="space-y-4">
-              <h3 className="text-sm font-medium text-gray-300">Presença Online (opcional)</h3>
+              <h3 className="text-sm font-medium text-gray-300">Presença Online (plano premium)</h3>
               
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-2">
@@ -842,7 +842,8 @@ function CreateMotelContent() {
                   name="website"
                   value={formData.website}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-red-500 transition"
+                  disabled={plan === 'free'}
+                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-red-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="https://www.seumotel.com.br"
                 />
               </div>
@@ -857,7 +858,8 @@ function CreateMotelContent() {
                     name="instagram"
                     value={formData.instagram}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-red-500 transition"
+                    disabled={plan === 'free'}
+                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-red-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
                     placeholder="@seumotel ou URL completa"
                   />
                 </div>
@@ -871,7 +873,8 @@ function CreateMotelContent() {
                     name="facebook"
                     value={formData.facebook}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-red-500 transition"
+                    disabled={plan === 'free'}
+                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-red-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
                     placeholder="@seumotel ou URL completa"
                   />
                 </div>
