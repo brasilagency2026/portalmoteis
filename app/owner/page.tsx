@@ -152,7 +152,7 @@ function OwnerPageContent() {
 
             <ul className="space-y-3 mb-6 text-zinc-300">
               <li className="flex items-center gap-2"><Check size={16} className="text-green-400"/> Cadastro completo do motel</li>
-              <li className="flex items-center gap-2"><Check size={16} className="text-green-400"/> Uniquement 1 photo</li>
+              <li className="flex items-center gap-2"><Check size={16} className="text-green-400"/> 1 photo</li>
               <li className="flex items-center gap-2"><Check size={16} className="text-green-400"/> Integração Google Maps</li>
               <li className="flex items-center gap-2"><Check size={16} className="text-green-400"/> Posição por distância</li>
             </ul>
@@ -184,6 +184,8 @@ function OwnerPageContent() {
               <li className="flex items-center gap-2"><Check size={16} className="text-green-400"/> Boost de prioridade 20km</li>
               <li className="flex items-center gap-2"><Check size={16} className="text-green-400"/> Badge Premium destaque</li>
               <li className="flex items-center gap-2"><Check size={16} className="text-green-400"/> Seção Premium exclusiva</li>
+              <li className="flex items-center gap-2"><Check size={16} className="text-green-400"/> Links para redes sociais</li>
+              <li className="flex items-center gap-2"><Check size={16} className="text-green-400"/> WhatsApp e telefone clicáveis</li>
               {/* <li className="flex items-center gap-2"><Check size={16} className="text-green-400"/> Estatísticas avançadas</li> */}
             </ul>
 
