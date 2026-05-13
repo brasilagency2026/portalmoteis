@@ -786,14 +786,15 @@ function CreateMotelContent() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  WhatsApp
+                  WhatsApp (plano premium)
                 </label>
                 <input
                   type="tel"
                   name="whatsapp"
                   value={formData.whatsapp}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-red-500 transition"
+                  disabled={plan === 'free'}
+                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-red-500 transition disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="Ex: (11) 98765-4321"
                 />
               </div>
