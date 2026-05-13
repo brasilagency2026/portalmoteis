@@ -19,6 +19,8 @@ export default function UpgradePage() {
           <li className="flex items-center gap-2"><Check size={18} className="text-yellow-400" /> <b>Boost de prioridade 20km</b> (seu motel aparece no topo num raio de 20km)</li>
           <li className="flex items-center gap-2"><Check size={18} className="text-yellow-400" /> <b>Selo Premium</b> em destaque</li>
           <li className="flex items-center gap-2"><Check size={18} className="text-yellow-400" /> <b>Seção Premium</b> exclusiva</li>
+          <li className="flex items-center gap-2"><Check size={18} className="text-yellow-400" /> <b>Links para redes sociais</b></li>
+          <li className="flex items-center gap-2"><Check size={18} className="text-yellow-400" /> <b>WhatsApp e telefone clicáveis</b></li>
           <li className="flex items-center gap-2"><Check size={18} className="text-yellow-400" /> Máxima visibilidade na plataforma</li>
         </ul>
         <div className="mb-6">
