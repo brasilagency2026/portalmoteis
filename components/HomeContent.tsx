@@ -3,7 +3,7 @@ import { useMemo, useState, useEffect } from 'react';
 import MotelCard from '@/components/MotelCard';
 import MotelMapDynamic from '@/components/MotelMapDynamic';
 import { Motel } from '@/types';
-import { MapPin } from 'lucide-react';
+import { MapPin, Instagram, Facebook } from 'lucide-react';
 
 type Props = {
   motels: Motel[]
@@ -451,11 +451,31 @@ export default function HomeContent({ motels }: Props) {
           <div className="mt-8 text-center text-xs font-bold text-yellow-400">
             A entrada em motéis é proibida para menores de 18 anos.
           </div>
-          <div className="mt-4 pt-6 border-t border-zinc-800 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
+          <div className="mt-4 pt-6 border-t border-zinc-800 flex flex-col gap-4 md:flex-row md:items-center md:justify-between text-xs text-zinc-500">
             <span>© {new Date().getFullYear()} BDSMBRAZIL. Todos os direitos reservados.</span>
-            <div className="flex gap-4">
+            <div className="flex items-center gap-4">
               <span>Termos de uso</span>
               <span>Política de privacidade</span>
+            </div>
+            <div className="flex items-center gap-4">
+              <a
+                href="https://www.instagram.com/bd.smbrazil/"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 text-zinc-300 hover:text-white transition"
+              >
+                <Instagram size={16} />
+                Instagram
+              </a>
+              <a
+                href="https://www.facebook.com/eros.domina.5"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 text-zinc-300 hover:text-white transition"
+              >
+                <Facebook size={16} />
+                Facebook
+              </a>
             </div>
           </div>
         </div>
