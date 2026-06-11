@@ -1,9 +1,14 @@
 import type { MetadataRoute } from 'next'
 
-const appBaseUrl =
-  process.env.NEXT_PUBLIC_APP_URL && !process.env.NEXT_PUBLIC_APP_URL.includes('portalmoteis.vercel.app')
+const rawAppBaseUrl =
+  process.env.NEXT_PUBLIC_APP_URL && process.env.NEXT_PUBLIC_APP_URL.trim() !== ''
     ? process.env.NEXT_PUBLIC_APP_URL
+    : process.env.NEXT_PUBLIC_VERCEL_URL
+    ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+    : process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
     : 'https://moteis.bdsmbrazil.com.br'
+const appBaseUrl = rawAppBaseUrl.replace(/\/$/, '')
 
 export default function robots(): MetadataRoute.Robots {
   return {
