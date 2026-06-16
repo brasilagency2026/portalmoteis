@@ -5,7 +5,7 @@ import { ArrowLeft, MessageCircle, Mail, Building2, Rocket } from 'lucide-react'
 
 export default function SuporteContatoPage() {
   const whatsapp = '5513955517904' // Formato internacional
-  const email = 'portalmoteis@bdsmbrazil.com.br'
+  const email = 'contato@bdsmbrazil.com.br'
   const cnpj = '64.465.357/0001-28'
   const whatsappDisplay = '(13) 95551-7904'
 
