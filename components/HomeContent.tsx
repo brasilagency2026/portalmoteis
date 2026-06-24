@@ -467,15 +467,6 @@ export default function HomeContent({ motels }: Props) {
                 <Instagram size={16} />
                 Instagram
               </a>
-              <a
-                href="https://www.facebook.com/eros.domina.5"
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 text-zinc-300 hover:text-white transition"
-              >
-                <Facebook size={16} />
-                Facebook
-              </a>
             </div>
           </div>
         </div>
