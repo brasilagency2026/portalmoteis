@@ -2,12 +2,12 @@ import type { MetadataRoute } from 'next'
 
 const appBaseUrl = 'https://moteis.bdsmbrazil.com.br'
 
-// Detect if running on a Vercel preview/staging domain
-const isVercelDomain =
-  process.env.VERCEL_URL && process.env.VERCEL_URL.includes('vercel.app')
+// Bloquer uniquement les previews Vercel (staging), pas la production
+const isVercelPreview =
+  process.env.VERCEL_ENV && process.env.VERCEL_ENV !== 'production'
 
 export default function robots(): MetadataRoute.Robots {
-  if (isVercelDomain) {
+  if (isVercelPreview) {
     return {
       rules: {
         userAgent: '*',
