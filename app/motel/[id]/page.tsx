@@ -103,7 +103,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     return {
         title: `${motelData.name} | Motéis BDSM`,
         description,
-        alternates: { canonical: canonicalPath },
+        alternates: { canonical: canonicalUrl },
         openGraph: {
             title: motelData.name,
             description,
