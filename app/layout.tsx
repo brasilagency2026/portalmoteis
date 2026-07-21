@@ -3,15 +3,7 @@ import Script from 'next/script';
 import './globals.css'; // Global styles
 import ConditionalHeader from '@/components/ConditionalHeader';
 
-const rawAppBaseUrl =
-  process.env.NEXT_PUBLIC_APP_URL && process.env.NEXT_PUBLIC_APP_URL.trim() !== ''
-    ? process.env.NEXT_PUBLIC_APP_URL
-    : process.env.NEXT_PUBLIC_VERCEL_URL
-    ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
-    : process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : 'https://moteis.bdsmbrazil.com.br'
-const appBaseUrl = rawAppBaseUrl.replace(/\/$/, '')
+const appBaseUrl = 'https://moteis.bdsmbrazil.com.br'
 
 export const metadata: Metadata = {
   metadataBase: new URL(appBaseUrl),

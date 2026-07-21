@@ -26,7 +26,7 @@ import NavigationButton from '@/components/NavigationButton'
 import { buildMotelPath, extractMotelId } from '@/lib/utils'
 import MotelDetailsLocationMap from '@/components/MotelDetailsLocationMap'
 
-const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://moteis.bdsmbrazil.com.br'
+const appBaseUrl = 'https://moteis.bdsmbrazil.com.br'
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 const UUID_PREFIX_REGEX = /^[0-9a-f]{8}$/i
 
