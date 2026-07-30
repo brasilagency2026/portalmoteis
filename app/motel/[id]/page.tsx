@@ -34,10 +34,24 @@ const truncateText = (value: string, maxLength: number) =>
     value.length <= maxLength ? value : `${value.slice(0, maxLength).trimEnd()}...`
 
 const buildSeoTitle = (name: string, location: string) => {
-    const baseTitle = `${name}${location ? ` em ${location}` : ''}`
-    if (baseTitle.length <= 45) return baseTitle
-    const truncatedName = truncateText(name, 35)
-    return `${truncatedName}${location ? ` em ${location}` : ''}`
+    const suffix = ' | Suite Fetiche BDSM'
+    const maxLength = 60 - suffix.length
+    const locationPart = location ? ` em ${location}` : ''
+    const rawTitle = `${name}${locationPart}`
+
+    if (rawTitle.length <= maxLength) {
+        return rawTitle
+    }
+
+    if (!location) {
+        return truncateText(name, maxLength)
+    }
+
+    const maxNameLength = Math.max(10, maxLength - locationPart.length)
+    const truncatedName = truncateText(name, maxNameLength)
+    const truncatedTitle = `${truncatedName}${locationPart}`
+
+    return truncatedTitle.length <= maxLength ? truncatedTitle : truncateText(name, maxLength)
 }
 
 type MotelLookupBase = {
@@ -99,7 +113,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
     if (!motelData) {
         return {
-            title: 'Motel não encontrado | BDSMBRAZIL',
+            title: 'Motel não encontrado',
             description: 'Esta ficha de motel não foi encontrada.',
             robots: { index: false, follow: true },
         }
@@ -110,16 +124,15 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     const image = motelData.photos?.[0] || '/favicon.ico'
     const locationLabel = extractAddressLocation(motelData.address)
     const seoBaseTitle = buildSeoTitle(motelData.name, locationLabel)
-    const seoTitle = `${seoBaseTitle} | Suite Fetiche BDSM`
     const description = motelData.description || `${seoBaseTitle} - Suite fetiche BDSM com discrição e conforto.`
 
     return {
-        title: seoTitle,
+        title: { absolute: seoBaseTitle },
         description,
         keywords: [motelData.name, 'Suite fetiche BDSM', locationLabel || 'motéis BDSM', 'motéis no Brasil'],
         alternates: { canonical: canonicalUrl },
         openGraph: {
-            title: seoTitle,
+            title: `${seoBaseTitle} | Suite Fetiche BDSM`,
             description,
             url: canonicalUrl,
             siteName: 'BDSMBRAZIL',
@@ -129,7 +142,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
         },
         twitter: {
             card: 'summary_large_image',
-            title: seoTitle,
+            title: `${seoBaseTitle} | Suite Fetiche BDSM`,
             description,
             images: [image],
         },
