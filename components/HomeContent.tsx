@@ -224,6 +224,12 @@ export default function HomeContent({ motels }: Props) {
             backgroundPosition: 'center',
           }}
         >
+          <img
+            src="https://i.ibb.co/jFjp6nh/grok-image-28e567e3-b224-45cb-aa3c-3d11b5bda95f-1.jpg"
+            alt=""
+            aria-hidden="true"
+            className="sr-only"
+          />
           <div className="bg-black/50">
             <div className="container mx-auto px-4 py-12 md:py-16">
               <div className="max-w-3xl text-white mb-8">

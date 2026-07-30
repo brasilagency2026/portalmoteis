@@ -30,6 +30,16 @@ const appBaseUrl = 'https://moteis.bdsmbrazil.com.br'
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 const UUID_PREFIX_REGEX = /^[0-9a-f]{8}$/i
 
+const truncateText = (value: string, maxLength: number) =>
+    value.length <= maxLength ? value : `${value.slice(0, maxLength).trimEnd()}...`
+
+const buildSeoTitle = (name: string, location: string) => {
+    const baseTitle = `${name}${location ? ` em ${location}` : ''}`
+    if (baseTitle.length <= 45) return baseTitle
+    const truncatedName = truncateText(name, 35)
+    return `${truncatedName}${location ? ` em ${location}` : ''}`
+}
+
 type MotelLookupBase = {
     id: string
     name: string
@@ -99,26 +109,27 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     const canonicalUrl = `${appBaseUrl}${canonicalPath}`
     const image = motelData.photos?.[0] || '/favicon.ico'
     const locationLabel = extractAddressLocation(motelData.address)
-    const titleLocation = locationLabel ? ` em ${locationLabel}` : ''
-    const description = motelData.description || `Conheça ${motelData.name}${motelData.address ? ` em ${motelData.address}` : ''}.`
+    const seoBaseTitle = buildSeoTitle(motelData.name, locationLabel)
+    const seoTitle = `${seoBaseTitle} | Suite Fetiche BDSM`
+    const description = motelData.description || `${seoBaseTitle} - Suite fetiche BDSM com discrição e conforto.`
 
     return {
-        title: `${motelData.name}${titleLocation} | Suite Fetiche BDSM | Motéis BDSM`,
-        description: `${motelData.name}${titleLocation} - Suite fetiche BDSM com discrição e conforto. ${motelData.description || 'Reserve sua suíte fetiche hoje.'}`,
+        title: seoTitle,
+        description,
         keywords: [motelData.name, 'Suite fetiche BDSM', locationLabel || 'motéis BDSM', 'motéis no Brasil'],
         alternates: { canonical: canonicalUrl },
         openGraph: {
-            title: `${motelData.name}${titleLocation} | Suite Fetiche BDSM`,
+            title: seoTitle,
             description,
             url: canonicalUrl,
             siteName: 'BDSMBRAZIL',
             locale: 'pt_BR',
             type: 'article',
-            images: [{ url: image, alt: `${motelData.name}${titleLocation} - Suite Fetiche BDSM` }],
+            images: [{ url: image, alt: `${seoBaseTitle} - Suite Fetiche BDSM` }],
         },
         twitter: {
             card: 'summary_large_image',
-            title: `${motelData.name}${titleLocation} | Suite Fetiche BDSM`,
+            title: seoTitle,
             description,
             images: [image],
         },
