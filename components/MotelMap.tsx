@@ -36,32 +36,46 @@ const getProxyImageUrl = (url: string) => {
     return url
 }
 
+interface MotelMarkerIconOptions extends Partial<L.IconOptions> {
+  alt?: string
+  shadowAlt?: string
+}
+
 // Fix for default marker icon in Next.js
-const DefaultMarkerIcon = L.Icon.extend({
-  options: {
-    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
-    alt: 'Motel marker',
-    shadowAlt: ''
-  },
+class DefaultMarkerIcon extends L.Icon {
+  constructor(options: MotelMarkerIconOptions = {}) {
+    const baseOptions: L.IconOptions = {
+      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+      iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41],
+    }
+
+    super({
+      ...baseOptions,
+      ...options,
+    } as L.IconOptions)
+  }
+
+  private get markerOptions() {
+    return this.options as MotelMarkerIconOptions
+  }
 
   createIcon(oldIcon: HTMLElement) {
     const icon = L.Icon.prototype.createIcon.call(this, oldIcon) as HTMLImageElement
-    if (icon && !icon.alt) icon.alt = this.options.alt || 'Marker'
+    if (icon && !icon.alt) icon.alt = this.markerOptions.alt || 'Marker'
     return icon
-  },
+  }
 
   createShadow(oldIcon: HTMLElement) {
     const shadow = L.Icon.prototype.createShadow.call(this, oldIcon) as HTMLImageElement
-    if (shadow && !shadow.alt) shadow.alt = this.options.shadowAlt || ''
+    if (shadow && !shadow.alt) shadow.alt = this.markerOptions.shadowAlt || ''
     return shadow
-  },
-})
+  }
+}
 
 const icon = new DefaultMarkerIcon({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
