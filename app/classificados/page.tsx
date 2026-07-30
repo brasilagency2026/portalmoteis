@@ -3,9 +3,23 @@ import type { Metadata } from 'next'
 import { ArrowLeft, Shield, Lock, Smartphone } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Classificados BDSM (Em breve)',
-  description: 'Nova plataforma de classificados BDSM com foco em anonimato e comunicação via Session.',
+  title: 'Classificados BDSM | Suite Fetiche BDSM',
+  description: 'Nova plataforma de classificados BDSM com foco em anonimato, comunicação via Session e conexão com suítes fetiche BDSM.',
+  keywords: ['classificados BDSM', 'suite fetiche BDSM', 'anonimato BDSM', 'app Session'],
   alternates: { canonical: '/classificados' },
+  openGraph: {
+    title: 'Classificados BDSM | Suite Fetiche BDSM',
+    description: 'Nova plataforma de classificados BDSM com foco em anonimato, comunicação via Session e conexão com suítes fetiche BDSM.',
+    url: 'https://moteis.bdsmbrazil.com.br/classificados',
+    siteName: 'Classificados BDSM',
+    locale: 'pt_BR',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Classificados BDSM | Suite Fetiche BDSM',
+    description: 'Nova plataforma de classificados BDSM com foco em anonimato, comunicação via Session e conexão com suítes fetiche BDSM.',
+  },
 }
 
 export default function ClassificadosComingSoonPage() {

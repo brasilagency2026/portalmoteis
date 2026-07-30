@@ -23,7 +23,7 @@ import {
 import ImageCarousel from '@/components/ImageCarousel'
 import { Motel } from '@/types'
 import NavigationButton from '@/components/NavigationButton'
-import { buildMotelPath, extractMotelId } from '@/lib/utils'
+import { buildMotelPath, extractMotelId, extractAddressLocation } from '@/lib/utils'
 import MotelDetailsLocationMap from '@/components/MotelDetailsLocationMap'
 
 const appBaseUrl = 'https://moteis.bdsmbrazil.com.br'
@@ -98,24 +98,27 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     const canonicalPath = buildMotelPath(motelData.name, motelData.id, motelData.address || undefined)
     const canonicalUrl = `${appBaseUrl}${canonicalPath}`
     const image = motelData.photos?.[0] || '/favicon.ico'
+    const locationLabel = extractAddressLocation(motelData.address)
+    const titleLocation = locationLabel ? ` em ${locationLabel}` : ''
     const description = motelData.description || `Conheça ${motelData.name}${motelData.address ? ` em ${motelData.address}` : ''}.`
 
     return {
-        title: `${motelData.name} | Motéis BDSM`,
-        description,
+        title: `${motelData.name}${titleLocation} | Suite Fetiche BDSM | Motéis BDSM`,
+        description: `${motelData.name}${titleLocation} - Suite fetiche BDSM com discrição e conforto. ${motelData.description || 'Reserve sua suíte fetiche hoje.'}`,
+        keywords: [motelData.name, 'Suite fetiche BDSM', locationLabel || 'motéis BDSM', 'motéis no Brasil'],
         alternates: { canonical: canonicalUrl },
         openGraph: {
-            title: motelData.name,
+            title: `${motelData.name}${titleLocation} | Suite Fetiche BDSM`,
             description,
             url: canonicalUrl,
             siteName: 'BDSMBRAZIL',
             locale: 'pt_BR',
             type: 'article',
-            images: [{ url: image }],
+            images: [{ url: image, alt: `${motelData.name}${titleLocation} - Suite Fetiche BDSM` }],
         },
         twitter: {
             card: 'summary_large_image',
-            title: motelData.name,
+            title: `${motelData.name}${titleLocation} | Suite Fetiche BDSM`,
             description,
             images: [image],
         },
@@ -196,8 +199,52 @@ export default async function MotelDetailsPage({ params }: { params: Promise<{ i
         redirect(canonicalPath)
     }
 
+    const locationLabel = extractAddressLocation(motel.address)
+    const pageUrl = `${appBaseUrl}${canonicalPath}`
+    const jsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'LodgingBusiness',
+        name: motel.name,
+        description: `${motel.name}${locationLabel ? ` em ${locationLabel}` : ''} - Suite fetiche BDSM com discrição e conforto.`,
+        url: pageUrl,
+        telephone: motel.phone || undefined,
+        image: motel.photos?.length ? motel.photos[0] : undefined,
+        address: motel.address
+            ? {
+                '@type': 'PostalAddress',
+                streetAddress: motel.address,
+            }
+            : undefined,
+        geo: motel.lat !== null && motel.lng !== null ? {
+            '@type': 'GeoCoordinates',
+            latitude: motel.lat,
+            longitude: motel.lng,
+        } : undefined,
+        amenityFeature: [
+            ...(motel.services || []).map((service) => ({
+                '@type': 'LocationFeatureSpecification',
+                name: service,
+                value: true,
+            })),
+            ...(motel.accessories || []).map((accessory) => ({
+                '@type': 'LocationFeatureSpecification',
+                name: accessory,
+                value: true,
+            })),
+        ],
+        sameAs: [
+            ...(motel.website ? [motel.website.startsWith('http') ? motel.website : `https://${motel.website}`] : []),
+            ...(motel.instagram ? [`https://instagram.com/${motel.instagram.replace('@', '')}`] : []),
+            ...(motel.facebook ? [`https://facebook.com/${motel.facebook}`] : []),
+        ],
+    }
+
     return (
         <div className="bg-zinc-50 dark:bg-zinc-950 min-h-screen pb-20 transition-colors">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
             {/* Header Content */}
             <div className="container mx-auto px-4 pt-24 pb-12">
                 <div className="flex flex-col gap-4">
@@ -308,7 +355,10 @@ export default async function MotelDetailsPage({ params }: { params: Promise<{ i
                         {/* Carousel Gallery */}
                         <section>
                             <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50 mb-6">Galeria de Fotos</h2>
-                            <ImageCarousel images={motel.photos} alt={motel.name} />
+                            <ImageCarousel
+                            images={motel.photos}
+                            alt={`${motel.name}${motel.address ? ` em ${extractAddressLocation(motel.address)}` : ''} - Suite Fetiche BDSM`}
+                        />
                         </section>
 
                         {/* Interactive Map */}

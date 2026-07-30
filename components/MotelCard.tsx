@@ -40,7 +40,7 @@ export default function MotelCard({ motel, distance, isPremiumClose, hasUserLoca
       {/^https?:\/\//.test(imgSrc) ? (
         <img
           src={decodeURIComponent(imgSrc)}
-          alt={motel.name}
+          alt={`Foto do motel ${motel.name}${motel.address ? ` em ${motel.address}` : ''} - Suite Fetiche BDSM`}
           loading="lazy"
           style={{ width: '100%', height: '100%', objectFit: 'cover', background: '#e5e7eb' }}
           className="object-cover group-hover:scale-105 transition-transform duration-500 h-full w-full"
@@ -49,7 +49,7 @@ export default function MotelCard({ motel, distance, isPremiumClose, hasUserLoca
       ) : (
         <Image
           src={imgSrc}
-          alt={motel.name}
+          alt={`Foto do motel ${motel.name}${motel.address ? ` em ${motel.address}` : ''} - Suite Fetiche BDSM`}
           fill
           sizes="(max-width: 768px) 100vw, 33vw"
           quality={60}

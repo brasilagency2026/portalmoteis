@@ -3,9 +3,23 @@ import type { Metadata } from 'next'
 import { ArrowLeft, MapPin, Users, Heart, Shield, MessageSquare } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Apps BDSMBRAZIL',
-  description: 'Conheça os aplicativos e serviços do ecossistema BDSMBRAZIL.',
+  title: 'Apps BDSMBRAZIL | Suite Fetiche BDSM',
+  description: 'Conheça os aplicativos e serviços do ecossistema BDSMBRAZIL para motéis BDSM e suítes fetiche BDSM.',
+  keywords: ['apps BDSM', 'motéis BDSM', 'suite fetiche BDSM', 'serviços BDSM'],
   alternates: { canonical: '/apps' },
+  openGraph: {
+    title: 'Apps BDSMBRAZIL | Suite Fetiche BDSM',
+    description: 'Conheça os aplicativos e serviços do ecossistema BDSMBRAZIL para motéis BDSM e suítes fetiche BDSM.',
+    url: 'https://moteis.bdsmbrazil.com.br/apps',
+    siteName: 'Apps BDSMBRAZIL',
+    locale: 'pt_BR',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Apps BDSMBRAZIL | Suite Fetiche BDSM',
+    description: 'Conheça os aplicativos e serviços do ecossistema BDSMBRAZIL para motéis BDSM e suítes fetiche BDSM.',
+  },
 }
 
 const apps = [

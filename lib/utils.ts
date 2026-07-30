@@ -53,7 +53,7 @@ function compactToUuid(value: string) {
   return UUID_REGEX.test(uuid) ? uuid : null
 }
 
-function extractAddressLocation(address?: string) {
+export function extractAddressLocation(address?: string) {
   if (!address) return ''
 
   const raw = address.trim()

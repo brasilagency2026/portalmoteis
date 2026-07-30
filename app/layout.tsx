@@ -8,10 +8,11 @@ const appBaseUrl = 'https://moteis.bdsmbrazil.com.br'
 export const metadata: Metadata = {
   metadataBase: new URL(appBaseUrl),
   title: {
-    default: 'Motéis BDSM | BDSMBRAZIL',
-    template: '%s | BDSMBRAZIL',
+    default: 'Motéis BDSM | Suite Fetiche BDSM | BDSMBRAZIL',
+    template: '%s | Suite Fetiche BDSM | BDSMBRAZIL',
   },
-  description: 'Encontre motéis BDSM com foco em discrição, localização e serviços especializados no Brasil.',
+  description: 'Encontre motéis BDSM e suítes fetiche BDSM no Brasil com foco em discrição, localização et services spécialisés.',
+  keywords: ['motéis BDSM', 'suite fetiche BDSM', 'motéis no Brasil', 'motel BDSM', 'suíte fetish', 'discrição'],
   alternates: {
     canonical: '/',
   },
@@ -20,13 +21,21 @@ export const metadata: Metadata = {
     locale: 'pt_BR',
     url: appBaseUrl,
     siteName: 'BDSMBRAZIL',
-    title: 'Motéis BDSM | BDSMBRAZIL',
-    description: 'Descubra motéis BDSM no Brasil com busca por localização e filtros práticos.',
+    title: 'Motéis BDSM | Suite Fetiche BDSM | BDSMBRAZIL',
+    description: 'Descubra motéis BDSM e suítes fetiche BDSM no Brasil com busca por localização e filtros práticos.',
+    images: [
+      {
+        url: `${appBaseUrl}/moteisbdsm.png`,
+        width: 1200,
+        height: 630,
+        alt: 'Motéis BDSM | Suite Fetiche BDSM | BDSMBRAZIL',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Motéis BDSM | BDSMBRAZIL',
-    description: 'Descubra motéis BDSM no Brasil com busca por localização e filtros práticos.',
+    title: 'Motéis BDSM | Suite Fetiche BDSM | BDSMBRAZIL',
+    description: 'Descubra motéis BDSM e suítes fetiche BDSM no Brasil com busca por localização e filtros práticos.',
   },
   robots: {
     index: true,

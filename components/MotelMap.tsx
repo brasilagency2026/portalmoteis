@@ -155,7 +155,7 @@ export default function MotelMap({ motels, userLocation }: { motels: Motel[], us
                 <div className="relative h-32 w-full rounded-t-lg overflow-hidden mb-2">
                   <Image 
                     src={getProxyImageUrl(motel.photos[0])} 
-                    alt={motel.name} 
+                    alt={`Foto do motel ${motel.name}${motel.address ? ` - ${motel.address}` : ''} - Suite Fetiche BDSM`} 
                     fill 
                     className="object-cover"
                   />

@@ -4,12 +4,13 @@ import { Motel } from '@/types'
 import HomeContent from '@/components/HomeContent'
 
 export const metadata: Metadata = {
-  title: 'Portal de Motéis BDSM no Brasil',
-  description: 'Busque motéis BDSM por estado e endereço, veja localização no mapa e encontre opções premium e discretas.',
+  title: 'Portal de Motéis BDSM no Brasil | Suite Fetiche BDSM',
+  description: 'Busque motéis BDSM et suítes fetiche BDSM por estado e endereço, veja localização no mapa e encontre opções premium e discretas.',
+  keywords: ['motéis BDSM', 'suite fetiche BDSM', 'motéis no brasil', 'motel BDSM', 'discrição'],
   alternates: { canonical: '/' },
   openGraph: {
-    title: 'Portal de Motéis BDSM no Brasil',
-    description: 'Busque motéis BDSM por estado e endereço, veja localização no mapa e encontre opções premium e discretas.',
+    title: 'Portal de Motéis BDSM no Brasil | Suite Fetiche BDSM',
+    description: 'Busque motéis BDSM e suítes fetiche BDSM por estado e endereço e encontre opções premium e discretas.',
     url: 'https://moteis.bdsmbrazil.com.br/',
     siteName: 'Portal de Motéis BDSM',
     images: [
@@ -17,11 +18,16 @@ export const metadata: Metadata = {
         url: 'https://moteis.bdsmbrazil.com.br/moteisbdsm.png',
         width: 1200,
         height: 630,
-        alt: 'Portal de Motéis BDSM no Brasil',
+        alt: 'Portal de Motéis BDSM no Brasil | Suite Fetiche BDSM',
       },
     ],
     locale: 'pt_BR',
     type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Portal de Motéis BDSM no Brasil | Suite Fetiche BDSM',
+    description: 'Busque motéis BDSM e suítes fetiche BDSM por estado e endereço e encontre opções premium e discretas.',
   },
 }
 
