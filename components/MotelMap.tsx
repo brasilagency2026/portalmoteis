@@ -140,6 +140,32 @@ function AutoFitBounds({ userLocation, motels }: { userLocation: [number, number
   )
 }
 
+function MapImageAltFixer() {
+  const map = useMap()
+
+  useEffect(() => {
+    const container = map.getContainer()
+    if (!container) return
+
+    const setAltAttributes = () => {
+      container.querySelectorAll<HTMLImageElement>('.leaflet-tile-pane img, .leaflet-marker-pane img').forEach((img) => {
+        if (!img.hasAttribute('alt')) {
+          img.alt = ''
+        }
+      })
+    }
+
+    setAltAttributes()
+
+    const observer = new MutationObserver(() => setAltAttributes())
+    observer.observe(container, { childList: true, subtree: true })
+
+    return () => observer.disconnect()
+  }, [map])
+
+  return null
+}
+
 export default function MotelMap({ motels, userLocation }: { motels: Motel[], userLocation: [number, number] | null }) {
   const defaultCenter: [number, number] = [-23.5505, -46.6333] // São Paulo
   
@@ -165,6 +191,7 @@ export default function MotelMap({ motels, userLocation }: { motels: Motel[], us
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <AutoFitBounds userLocation={userLocation} motels={motelsWithCoords} />
+        <MapImageAltFixer />
         
         {/* Cercle de 20km pour les motels premium proches */}
         {userLocation && (
