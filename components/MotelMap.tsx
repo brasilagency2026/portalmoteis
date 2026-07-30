@@ -148,7 +148,7 @@ function MapImageAltFixer() {
     if (!container) return
 
     const setAltAttributes = () => {
-      container.querySelectorAll<HTMLImageElement>('.leaflet-tile-pane img, .leaflet-marker-pane img').forEach((img) => {
+      container.querySelectorAll<HTMLImageElement>('.leaflet-tile-pane img, .leaflet-marker-pane img, .leaflet-shadow-pane img').forEach((img) => {
         const classList = img.className
 
         if (classList.includes('leaflet-tile')) {
