@@ -37,24 +37,46 @@ const getProxyImageUrl = (url: string) => {
 }
 
 // Fix for default marker icon in Next.js
-const icon = L.icon({
+const DefaultMarkerIcon = L.Icon.extend({
+  options: {
+    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+    alt: 'Motel marker',
+    shadowAlt: ''
+  },
+
+  createIcon(oldIcon: HTMLElement) {
+    const icon = L.Icon.prototype.createIcon.call(this, oldIcon) as HTMLImageElement
+    if (icon && !icon.alt) icon.alt = this.options.alt || 'Marker'
+    return icon
+  },
+
+  createShadow(oldIcon: HTMLElement) {
+    const shadow = L.Icon.prototype.createShadow.call(this, oldIcon) as HTMLImageElement
+    if (shadow && !shadow.alt) shadow.alt = this.options.shadowAlt || ''
+    return shadow
+  },
+})
+
+const icon = new DefaultMarkerIcon({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-});
+  alt: 'Motel location marker',
+  shadowAlt: ''
+})
 
-const premiumIcon = L.icon({
+const premiumIcon = new DefaultMarkerIcon({
   iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-gold.png',
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41]
-});
+  alt: 'Motel premium location marker',
+  shadowAlt: ''
+})
 
 const userLocationIcon = L.divIcon({
   className: 'user-location-marker',
@@ -158,6 +180,7 @@ export default function MotelMap({ motels, userLocation }: { motels: Motel[], us
                     alt={`Foto do motel ${motel.name}${motel.address ? ` - ${motel.address}` : ''} - Suite Fetiche BDSM`} 
                     fill 
                     className="object-cover"
+                    priority={false}
                   />
                 </div>
                 <h3 className="font-bold text-lg leading-tight mb-1">{motel.name}</h3>
