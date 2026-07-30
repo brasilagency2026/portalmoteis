@@ -124,19 +124,32 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     const image = motelData.photos?.[0] || '/favicon.ico'
     const locationLabel = extractAddressLocation(motelData.address)
     const seoBaseTitle = buildSeoTitle(motelData.name, locationLabel)
-    const description = motelData.description || `${seoBaseTitle} - Suite fetiche BDSM com discrição e conforto.`
+        const description = motelData.description || `${seoBaseTitle} - Suite fetiche BDSM com discrição e conforto.`
+
+        // Normalize meta description length to avoid search engine warnings
+        const MIN_DESC = 70
+        const MAX_DESC = 160
+        let finalDescription = (description || '').trim()
+
+        if (finalDescription.length < MIN_DESC) {
+            finalDescription = `${finalDescription} - Suite fetiche BDSM com discrição e conforto.`
+        }
+
+        if (finalDescription.length > MAX_DESC) {
+            finalDescription = `${finalDescription.slice(0, MAX_DESC - 3).trimEnd()}...`
+        }
 
     // If seoBaseTitle is very short, include the site suffix to avoid "Title too short" warnings
     const titleAbsolute = seoBaseTitle.length < 30 ? `${seoBaseTitle} | Suite Fetiche BDSM` : seoBaseTitle
 
     return {
         title: { absolute: titleAbsolute },
-        description,
+            description: finalDescription,
         keywords: [motelData.name, 'Suite fetiche BDSM', locationLabel || 'motéis BDSM', 'motéis no Brasil'],
         alternates: { canonical: canonicalUrl },
         openGraph: {
             title: `${seoBaseTitle} | Suite Fetiche BDSM`,
-            description,
+                description: finalDescription,
             url: canonicalUrl,
             siteName: 'BDSMBRAZIL',
             locale: 'pt_BR',
@@ -146,7 +159,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
         twitter: {
             card: 'summary_large_image',
             title: `${seoBaseTitle} | Suite Fetiche BDSM`,
-            description,
+                description: finalDescription,
             images: [image],
         },
     }
