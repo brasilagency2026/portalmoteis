@@ -126,8 +126,11 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     const seoBaseTitle = buildSeoTitle(motelData.name, locationLabel)
     const description = motelData.description || `${seoBaseTitle} - Suite fetiche BDSM com discrição e conforto.`
 
+    // If seoBaseTitle is very short, include the site suffix to avoid "Title too short" warnings
+    const titleAbsolute = seoBaseTitle.length < 30 ? `${seoBaseTitle} | Suite Fetiche BDSM` : seoBaseTitle
+
     return {
-        title: { absolute: seoBaseTitle },
+        title: { absolute: titleAbsolute },
         description,
         keywords: [motelData.name, 'Suite fetiche BDSM', locationLabel || 'motéis BDSM', 'motéis no Brasil'],
         alternates: { canonical: canonicalUrl },
