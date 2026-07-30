@@ -149,8 +149,24 @@ function MapImageAltFixer() {
 
     const setAltAttributes = () => {
       container.querySelectorAll<HTMLImageElement>('.leaflet-tile-pane img, .leaflet-marker-pane img').forEach((img) => {
-        if (!img.hasAttribute('alt')) {
-          img.alt = ''
+        const classList = img.className
+
+        if (classList.includes('leaflet-tile')) {
+          img.alt = img.alt.trim() || 'Mapa de localização do motel'
+          img.setAttribute('aria-hidden', 'true')
+          img.setAttribute('role', 'presentation')
+          return
+        }
+
+        if (classList.includes('leaflet-marker-shadow')) {
+          img.alt = img.alt.trim() || 'Sombra do marcador'
+          img.setAttribute('aria-hidden', 'true')
+          img.setAttribute('role', 'presentation')
+          return
+        }
+
+        if (!img.alt.trim()) {
+          img.alt = 'Motel location marker'
         }
       })
     }
